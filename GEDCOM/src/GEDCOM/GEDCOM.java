@@ -13,6 +13,8 @@ import java.util.HashMap;
 public class GEDCOM {
 	// Data fields
 	public static HashMap<String, String> valid; // HashMap of all valid key/value pairs
+	public static ArrayList<Family> individuals;
+	public static ArrayList<Individual> families;
 
 	// Constructor: fills out HashMap with valid tags and corresponding levels
 	public GEDCOM() {
