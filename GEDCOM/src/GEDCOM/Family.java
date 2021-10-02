@@ -3,14 +3,14 @@ package GEDCOM;
 import java.util.Date;
 
 public class Family {
-    public String id;
-    public Date marriage_date;
-    public Date divorce_date;
-    public String husband_id;
-    public String husband_name;
-    public String wife_id;
-    public String wife_name;
-    public String[] children;
+    private String id;
+    private Date marriage_date;
+    private Date divorce_date;
+    private String husband_id;
+    private String husband_name;
+    private String wife_id;
+    private String wife_name;
+    private String[] children;
 
     public Family(String id, Date marriage_date, Date divorce_date, String husband_id, 
                 String husband_name, String wife_id, String wife_name, String[] children) {
