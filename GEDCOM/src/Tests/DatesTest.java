@@ -1,4 +1,4 @@
-package Tests;
+package tests;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -52,14 +52,14 @@ public class DatesTest {
     void test1() {
         // Date is good; valid
         try {
-            GEDCOM.individuals.add(new Family("1",
+            GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1950"),null,
                     husband1.getId(),husband1.getName(),wife1.getId(),wife1.getName(), null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         assertTrue(husband1.isTheMarriageBeforeDeath(wife1));
-        GEDCOM.individuals.remove(0);
+        GEDCOM.families.remove(0);
 
     }
 
@@ -67,14 +67,14 @@ public class DatesTest {
     void test2() {
         // Date is from future; not valid
         try {
-            GEDCOM.individuals.add(new Family("1",
+            GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1950"),null,
                     husband1.getId(),husband1.getName(),wife2.getId(),wife2.getName(), null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         assertTrue(husband1.isTheMarriageBeforeDeath(wife2));
-        GEDCOM.individuals.remove(0);
+        GEDCOM.families.remove(0);
 
     }
 
@@ -82,14 +82,14 @@ public class DatesTest {
     void test3() {
         // Date is from future; not valid
         try {
-            GEDCOM.individuals.add(new Family("1",
+            GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/2022"),null,
                     husband2.getId(),husband2.getName(),wife1.getId(),wife1.getName(), null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         assertFalse(husband2.isTheMarriageBeforeDeath(wife1));
-        GEDCOM.individuals.remove(0);
+        GEDCOM.families.remove(0);
 
     }
 
@@ -97,14 +97,14 @@ public class DatesTest {
     void test4() {
         // Date is good; valid
         try {
-            GEDCOM.individuals.add(new Family("1",
+            GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1990"),null,
                     husband2.getId(),husband2.getName(),wife2.getId(),wife2.getName(), null));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         assertFalse(husband2.isTheMarriageBeforeDeath(wife2));
-        GEDCOM.individuals.remove(0);
+        GEDCOM.families.remove(0);
 
     }
 

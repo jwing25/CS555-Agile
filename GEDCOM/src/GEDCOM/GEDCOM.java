@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Author: Francis Borja
@@ -13,8 +14,8 @@ import java.util.HashMap;
 public class GEDCOM {
 	// Data fields
 	public static HashMap<String, String> valid; // HashMap of all valid key/value pairs
-	public static ArrayList<Family> individuals = new ArrayList<Family>();
-	public static ArrayList<Individual> families = new ArrayList<Individual>();
+	public static ArrayList<Individual> individuals = new ArrayList<Individual>();
+	public static ArrayList<Family> families = new ArrayList<Family>();
 
 	// Constructor: fills out HashMap with valid tags and corresponding levels
 	public GEDCOM() {
@@ -104,6 +105,27 @@ public class GEDCOM {
 		} else {
 			System.out.println("<-- " + level + "|" + tag + "|" + valid + "|" + arguments);
 		}
+	}
+
+	public static boolean checkUniqueIds() {
+		ArrayList<String> individual_ids = new ArrayList<String>();
+		for (Individual i : individuals) {
+			individual_ids.add(i.getId());
+		}
+
+		ArrayList<String> family_ids = new ArrayList<String>();
+		for (Family f : families) {
+			family_ids.add(f.getId());
+		}
+
+		// Put ids into hash sets and compare sizes
+		HashSet<String> individual_set = new HashSet<String>(individual_ids);
+		HashSet<String> family_set = new HashSet<String>(family_ids);
+
+		if (individual_set.size() < individual_ids.size() || family_set.size() < family_ids.size()) {
+			return false;
+		}
+		return true;
 	}
 
     public static void main(String[] args) {
