@@ -1,5 +1,6 @@
 package GEDCOM;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -139,5 +140,15 @@ public class Individual {
             return marriageDate.before(deathDateHusband);
         }
         return marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
+    }
+
+    public boolean isBirthBeforeDeath() {
+        if (this.death_date == null) {
+            return true;
+        }
+        if (this.birthday.equals(this.death_date)) {
+            return true;
+        }
+        return this.birthday.before(this.death_date);
     }
 }
