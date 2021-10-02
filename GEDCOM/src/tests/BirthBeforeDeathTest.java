@@ -26,8 +26,11 @@ public class BirthBeforeDeathTest {
             i2 = new Individual("I2", "individual2", "F", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
                                 21, true, new SimpleDateFormat("MM/dd/yyyy").parse("1/2/2020"), null, null);
             // before
-            i3 = new Individual("I2", "individual2", "M", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
+            i3 = new Individual("I3", "individual2", "M", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
                                 21, true, new SimpleDateFormat("MM/dd/yyyy").parse("1/1/1999"), null, null);
+            // no death
+            i4 = new Individual("I4", "individual2", "M", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
+                                21, true, null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -35,20 +38,29 @@ public class BirthBeforeDeathTest {
 
     @Test
     void test1() {
+        // same day
         boolean is_birthbeforedeath = i1.isBirthBeforeDeath();
         assertTrue(is_birthbeforedeath);
     }
 
     @Test
     void test2() {
+        // after
         boolean is_birthbeforedeath = i2.isBirthBeforeDeath();
         assertTrue(is_birthbeforedeath);
     }
 
     @Test
     void test3() {
+        // before
         boolean is_birthbeforedeath = i3.isBirthBeforeDeath();
         assertFalse(is_birthbeforedeath);
     }
 
+    @Test
+    void test4() {
+        // no death
+        boolean is_birthbeforedeath = i4.isBirthBeforeDeath();
+        assertTrue(is_birthbeforedeath);
+    }
 }
