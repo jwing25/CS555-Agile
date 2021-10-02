@@ -104,11 +104,11 @@ public class Individual {
             return false;
         }
 
-        ArrayList<Family> individuals = GEDCOM.individuals;
+        ArrayList<Family> families = GEDCOM.families;
         String husbandID = this.gender.equals("Male")?id: spouse.id;
         String wifeID = this.gender.equals("Female")?id: spouse.id;
         Family ourFamily = null;
-        for (Family f : individuals) {
+        for (Family f : families) {
             if(f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)){
                 ourFamily = f;
                 break;
@@ -139,6 +139,5 @@ public class Individual {
             return marriageDate.before(deathDateHusband);
         }
         return marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
-
     }
 }
