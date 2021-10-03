@@ -142,6 +142,34 @@ public class Individual {
         return marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
     }
 
+    public boolean isTheMarriageBeforeDivorce(Individual spouse) {
+        if (spouse == null || spouse.spouse == null || spouse.spouse.length == 0) {
+            return false;
+        }
+
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male") ? id : spouse.id;
+        String wifeID = this.gender.equals("Female") ? id : spouse.id;
+        Family ourFamily = null;
+        for (Family f : families) {
+            if (f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)) {
+                ourFamily = f;
+                break;
+            }
+        }
+        if (ourFamily == null) {
+            return false;
+        }
+        Date marriageDate = ourFamily.getMarriageDate();
+        Date divorceDate = ourFamily.getDivorceDate();
+
+        if (divorceDate != null) {
+            return marriageDate.before(divorceDate);
+        } else {
+            return true;
+        }
+    }
+
     public boolean isBirthBeforeDeath() {
         if (this.death_date == null) {
             return true;
