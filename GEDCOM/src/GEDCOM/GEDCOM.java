@@ -17,6 +17,30 @@ public class GEDCOM {
 	public static ArrayList<Individual> individuals = new ArrayList<Individual>();
 	public static ArrayList<Family> families = new ArrayList<Family>();
 
+	private class Line {
+		public String level;
+		public String tag;
+		public boolean isValid;
+		public String arguments;
+
+		public Line(String level, String tag, boolean isValid, String arguments) {
+			this.level = level;
+			this.tag = tag;
+			this.isValid = isValid;
+			this.arguments = arguments;
+		}
+
+		public String toString() {
+			String valid = this.isValid ? "Y" : "N";
+
+			if (arguments.isEmpty()) {
+				return "<-- " + level + "|" + tag + "|" + valid + "|";
+			} else {
+				return "<-- " + level + "|" + tag + "|" + valid + "|" + arguments;
+			}
+		}
+	}
+
 	// Constructor: fills out HashMap with valid tags and corresponding levels
 	public GEDCOM() {
 		valid = new HashMap<String, String>();
@@ -66,19 +90,19 @@ public class GEDCOM {
 	 * Checks whether or not each level/tag pair is valid
 	 * @param level The level to check (value)
 	 * @param tag The tag to check (key)
-	 * @return "Y" if it is a valid pair, "N" if it is not a valid pair.
+	 * @return true if it is a valid pair, false if it is not a valid pair.
 	 */
-	private String checkValid(String level, String tag) {
-		return (valid.get(tag) != null && valid.get(tag).equals(level)) ? "Y" : "N";
+	private boolean checkValid(String level, String tag) {
+		return (valid.get(tag) != null && valid.get(tag).equals(level)) ? true : false;
 	}
 
 	/**
-	 * Parses a line to give the specified output
+	 * Parses a line into a 
 	 * @param line The line to parse
 	 */
-	private void parseLine(String line) {
+	private Line parseLine(String line) {
 		String[] array = line.split(" ");
-		String level = array[0], tag, valid, arguments = "";
+		String level = array[0], tag, arguments = "";
 
 		// Special format for INDI and FAM tags
 		if (line.contains("INDI") || line.contains("FAM")) {
@@ -98,12 +122,14 @@ public class GEDCOM {
 				}
 			}
 		}
-		valid = checkValid(level, tag);
+		boolean isValid = checkValid(level, tag);
 
-		if (arguments.isEmpty()) {
-			System.out.println("<-- " + level + "|" + tag + "|" + valid + "|");
-		} else {
-			System.out.println("<-- " + level + "|" + tag + "|" + valid + "|" + arguments);
+		return new Line(level, tag, isValid, arguments);
+	}
+
+	private void getIndividuals(ArrayList<String> lines) {
+		for (String line : lines) {
+			Line parsed_line = parseLine(line);
 		}
 	}
 
@@ -148,10 +174,12 @@ public class GEDCOM {
 		// Read file
 		ArrayList<String> lines = parser.readFile(file);
 
+		Line current;
 		// Parse each line
 		for (String line : lines) {
 			System.out.println("--> " + line);
-			parser.parseLine(line);
+			current = parser.parseLine(line);
+			System.out.println(current);
 		}
     }
 }
