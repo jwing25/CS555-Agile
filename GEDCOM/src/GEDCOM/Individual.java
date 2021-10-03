@@ -179,4 +179,18 @@ public class Individual {
         }
         return this.birthday.before(this.death_date);
     }
+
+    public boolean uniqueNameAndBirthDate(Individual person) {
+        //base case checking individual and husband and wife
+        ArrayList<Individual> individual = GEDCOM.individuals;
+
+        for (Individual id : individual) {
+            String personName = person.name;
+            Date personBirthDate = person.birthday;
+            if (id.getName().equals(personName) && id.getBirthday().equals(personBirthDate)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
