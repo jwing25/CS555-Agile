@@ -180,7 +180,7 @@ public class Individual {
         return this.birthday.before(this.death_date);
     }
 
-    public boolean uniqueNameAndBirthDate(Individual person) {
+    public boolean uniqueNameAndBirthDate() {
         //base case checking individual and husband and wife
         ArrayList<Individual> individual = GEDCOM.individuals;
 
