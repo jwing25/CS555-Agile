@@ -185,8 +185,8 @@ public class Individual {
         ArrayList<Individual> individual = GEDCOM.individuals;
 
         for (Individual id : individual) {
-            String personName = person.name;
-            Date personBirthDate = person.birthday;
+            String personName = id.name;
+            Date personBirthDate = id.birthday;
             if (id.getName().equals(personName) && id.getBirthday().equals(personBirthDate)) {
                 return false;
             }
