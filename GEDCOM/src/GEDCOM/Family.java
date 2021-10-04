@@ -1,5 +1,6 @@
 package GEDCOM;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Family {
@@ -10,12 +11,15 @@ public class Family {
     private String husband_name;
     private String wife_id;
     private String wife_name;
-    private String[] children;
+    private ArrayList<String> children;
 
-    public Family() { }
+    public Family(String id) {
+        this.id = id;
+        this.children = new ArrayList<String>();
+     }
 
     public Family(String id, Date marriage_date, Date divorce_date, String husband_id, 
-                String husband_name, String wife_id, String wife_name, String[] children) {
+                String husband_name, String wife_id, String wife_name, ArrayList<String> children) {
         this.id = id;
         this.marriage_date = marriage_date;
         this.divorce_date = divorce_date;
@@ -54,7 +58,7 @@ public class Family {
         return this.wife_name;
     }
 
-    public String[] getChildren() {
+    public ArrayList<String> getChildren() {
         return this.children;
     }
 
@@ -86,7 +90,11 @@ public class Family {
         this.wife_name = wife_name;
     }
 
-    public void setChildren(String[] children) {
+    public void setChildren(ArrayList<String> children) {
         this.children = children;
+    }
+
+    public void addChild(String childId) {
+        this.children.add(childId);
     }
 }

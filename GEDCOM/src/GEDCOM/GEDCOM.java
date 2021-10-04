@@ -176,14 +176,6 @@ public class GEDCOM {
 					continue;
 				}
 				switch (current.tag) {
-					case "INDI":
-						GEDCOM.individuals.add(indi);
-						indi = null;
-						break;
-					case "FAM":
-						GEDCOM.individuals.add(indi);
-						indi = null;
-						break;
 					case "NAME":
 						indi.setName(current.arguments);
 						break;
@@ -224,6 +216,79 @@ public class GEDCOM {
 		}
 	}
 
+	private void getFamilies(ArrayList<String> lines) {
+		Line current;
+		Family fam = null;
+		for (int i = 0; i < lines.size(); i++) {
+			current = parseLine(lines.get(i));
+			// If line is invalid, skip
+			if (!current.isValid) {
+				continue;
+			}
+			if (fam == null) {
+				if (current.tag.compareTo("FAM") == 0) {
+					fam = new Family(current.arguments);
+				}
+			} else {
+				if (current.level.compareTo("0") == 0 || i == lines.size() - 1) { // End of family
+					// Add family to list
+					GEDCOM.families.add(fam);
+
+					// Create new family
+					if (current.tag.compareTo("FAM") == 0) {
+						fam = new Family(current.arguments);
+					} else {
+						fam = null;
+					}
+					continue;
+				}
+				switch (current.tag) {
+					case "MARR":
+						Line marriageline = parseLine(lines.get(i+1));
+						try {
+							Date marriage_date = new SimpleDateFormat("dd/MMM/yyyy").parse(marriageline.arguments.replaceAll(" ", "/"));
+							fam.setMarriageDate(marriage_date);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+					case "HUSB":
+						fam.setHusbandId(current.arguments);
+						for (Individual indi : individuals) {
+							if (indi.getId().compareTo(current.arguments) == 0) {
+								fam.setHusbandName(indi.getName());
+							}
+						}
+						break;
+					case "WIFE":
+						fam.setWifeId(current.arguments);
+						for (Individual indi : individuals) {
+							if (indi.getId().compareTo(current.arguments) == 0) {
+								fam.setWifeName(indi.getName());
+							}
+						}
+						break;
+					case "CHIL":
+						fam.addChild(current.arguments);
+						break;
+					case "DIV":
+						Line divorceline = parseLine(lines.get(i+1));
+						if (divorceline.tag.compareTo("DATE") == 0) {
+							try {
+								Date divorce_date = new SimpleDateFormat("dd/MMM/yyyy").parse(divorceline.arguments.replaceAll(" ", "/"));
+								fam.setDivorceDate(divorce_date);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						break;
+					default: 
+						break;
+				}
+			}
+		}
+	}
+
 	public static boolean checkUniqueIds() {
 		ArrayList<String> individual_ids = new ArrayList<String>();
 		for (Individual i : individuals) {
@@ -246,38 +311,38 @@ public class GEDCOM {
 	}
 
 	public static void printIndividuals() {
+		System.out.println("Individuals");
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
 		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH", "CHILD", "SPOUSE");
 		System.out.println("-------------------------------------------------------------------------------------------------------------");
 		String birthday, deathdate, child, spouse;
 		// TODO: Print in ID order
 		for (Individual i : individuals) {
-			if (i.getBirthday() != null) {
-				birthday = f.format(i.getBirthday());
-			} else {
-				birthday = "N/A";
-			}
-			if (i.getAlive()) {
-				deathdate = "N/A";
-			} else {
-				deathdate = f.format(i.getDeath());
-			}
+			birthday = i.getBirthday() != null ? f.format(i.getBirthday()) : "N/A";
+			deathdate = !i.getAlive() ? f.format(i.getDeath()) : "N/A";
 			child = i.getChildren().size() == 0 ? "N/A" : i.getChildren().toString();
 			spouse= i.getSpouse().size() == 0 ? "N/A" : i.getSpouse().toString();
-			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", i.getId(), i.getName(), i.getGender(), 
+			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", i.getId(), i.getName().replaceAll("/", ""), i.getGender(), 
 				birthday, i.getAge(), i.getAlive(), deathdate, child, spouse);
 		}
+		System.out.println("");
     }
 
 	public static void printFamilies() {
+		System.out.println("Families");
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
-		System.out.format("%5s | %12s | %12s | %12s | %20s | %10s | %20s | %20s \n", "ID", "MARRIED", "DIVORCED", "HUSBAND ID", "HUSBAND NAME", "WIFE ID", "WIFE NAME", "CHILDREN");
-		System.out.println("-----------------------------------------------------------------------------------");
+		System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", "ID", "MARRIED", "DIVORCED", "HUSBAND ID", "HUSBAND NAME", "WIFE ID", "WIFE NAME", "CHILDREN");
+		System.out.println("----------------------------------------------------------------------------------------------------------------------------");
+		String marriagedate, divorcedate, children;
 		// TODO: Print in ID order
 		for (Family fam : families) {
-			System.out.format("%5s | %12s | %12s | %12s | %20s | %10s | %20s | %20s \n", fam.getId(), fam.getMarriageDate(), fam.getDivorceDate(), 
-				fam.getHusbandId(), fam.getHusbandId(), fam.getWifeId(), fam.getWifeName(), fam.getChildren());
+			marriagedate = fam.getMarriageDate() != null ? f.format(fam.getMarriageDate()) : "N/A";
+			divorcedate = fam.getDivorceDate() != null ? f.format(fam.getDivorceDate()) : "N/A";
+			children = fam.getChildren().size() == 0 ? "N/A" : fam.getChildren().toString();
+			System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", fam.getId(), marriagedate, divorcedate, 
+				fam.getHusbandId(), fam.getHusbandName().replaceAll("/", ""), fam.getWifeId(), fam.getWifeName().replaceAll("/", ""), children);
 		}
+		System.out.println("");
     }
 
     public static void main(String[] args) {
@@ -311,5 +376,8 @@ public class GEDCOM {
 		// Print individuals
 		parser.getIndividuals(lines);
 		printIndividuals();
+
+		parser.getFamilies(lines);
+		printFamilies();
     }
 }
