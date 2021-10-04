@@ -156,7 +156,7 @@ public class Individual {
     }
 
     public boolean isTheMarriageBeforeDivorce(Individual spouse) {
-        if (spouse == null || spouse.spouse == null || spouse.spouse.length == 0) {
+        if (spouse == null || spouse.spouse == null || spouse.spouse.size() == 0) {
             return false;
         }
 
@@ -194,7 +194,7 @@ public class Individual {
     }
 
     public boolean isDivorceBeforeDeath(Individual spouse){
-        if(spouse == null || spouse.spouse == null || spouse.spouse.length == 0){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
             return false;
         }
     
