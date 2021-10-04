@@ -5,6 +5,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -146,7 +147,7 @@ public class GEDCOM {
 					indi = new Individual(current.arguments);
 				}
 			} else {
-				if (current.level.compareTo("0") == 0 || i == lines.size() - 1) { // End of individual
+				if (current.level.compareTo("0") == 0) { // End of individual
 					// Set alive status
 					if (indi.getDeath() == null) {
 						indi.setAlive(true);
@@ -214,6 +215,9 @@ public class GEDCOM {
 				}
 			}
 		}
+		if (indi != null) {
+			individuals.add(indi);
+		}
 	}
 
 	private void getFamilies(ArrayList<String> lines) {
@@ -230,7 +234,7 @@ public class GEDCOM {
 					fam = new Family(current.arguments);
 				}
 			} else {
-				if (current.level.compareTo("0") == 0 || i == lines.size() - 1) { // End of family
+				if (current.level.compareTo("0") == 0) { // End of family
 					// Add family to list
 					GEDCOM.families.add(fam);
 
@@ -287,6 +291,9 @@ public class GEDCOM {
 				}
 			}
 		}
+		if (fam != null) {
+			families.add(fam);
+		}
 	}
 
 	public static boolean checkUniqueIds() {
@@ -315,14 +322,26 @@ public class GEDCOM {
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
 		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH", "CHILD", "SPOUSE");
 		System.out.println("-------------------------------------------------------------------------------------------------------------");
-		String birthday, deathdate, child, spouse;
+		String id, name, gender, birthday, age, alive, deathdate, child, spouse;
 		// TODO: Print in ID order
+		Collections.sort(individuals, (Individual i1, Individual i2) -> {
+			return i1.getId().compareTo(i2.getId());
+		});
 		for (Individual i : individuals) {
+			id = i.getId() != null ? i.getId() : "N/A";
+			name = i.getName() != null ? i.getName() : "N/A";
+			gender = i.getGender() != null ? i.getGender() : "N/A";
+			age = i.getAge() == 0 ? Integer.toString(i.getAge()) : "N/A";
+			alive = i.getAlive() != null ? i.getAlive().toString() : "N/A";
 			birthday = i.getBirthday() != null ? f.format(i.getBirthday()) : "N/A";
-			deathdate = !i.getAlive() ? f.format(i.getDeath()) : "N/A";
+			try {
+				deathdate = !i.getAlive() ? f.format(i.getDeath()) : "N/A";
+			} catch (Exception e) {
+				deathdate = "N/A";
+			}
 			child = i.getChildren().size() == 0 ? "N/A" : i.getChildren().toString();
 			spouse= i.getSpouse().size() == 0 ? "N/A" : i.getSpouse().toString();
-			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", i.getId(), i.getName().replaceAll("/", ""), i.getGender(), 
+			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", id, name, gender, 
 				birthday, i.getAge(), i.getAlive(), deathdate, child, spouse);
 		}
 		System.out.println("");
@@ -333,14 +352,19 @@ public class GEDCOM {
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
 		System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", "ID", "MARRIED", "DIVORCED", "HUSBAND ID", "HUSBAND NAME", "WIFE ID", "WIFE NAME", "CHILDREN");
 		System.out.println("----------------------------------------------------------------------------------------------------------------------------");
-		String marriagedate, divorcedate, children;
+		String id, marriagedate, divorcedate, husband_id, husband_name, wife_id, wife_name, children;
 		// TODO: Print in ID order
 		for (Family fam : families) {
+			id = fam.getId() != null ? fam.getId() : "N/A";
+			husband_id = fam.getHusbandId() != null ? fam.getHusbandId() : "N/A";
+			husband_name = fam.getHusbandName() != null ? fam.getHusbandName() : "N/A";
+			wife_id = fam.getWifeId() != null ? fam.getWifeId() : "N/A";
+			wife_name = fam.getWifeName() != null ? fam.getWifeName() : "N/A";
 			marriagedate = fam.getMarriageDate() != null ? f.format(fam.getMarriageDate()) : "N/A";
 			divorcedate = fam.getDivorceDate() != null ? f.format(fam.getDivorceDate()) : "N/A";
 			children = fam.getChildren().size() == 0 ? "N/A" : fam.getChildren().toString();
-			System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", fam.getId(), marriagedate, divorcedate, 
-				fam.getHusbandId(), fam.getHusbandName().replaceAll("/", ""), fam.getWifeId(), fam.getWifeName().replaceAll("/", ""), children);
+			System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", id, marriagedate, divorcedate, 
+				husband_id, husband_name, wife_id, wife_name, children);
 		}
 		System.out.println("");
     }

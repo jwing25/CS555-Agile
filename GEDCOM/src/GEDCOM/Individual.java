@@ -3,7 +3,7 @@ package GEDCOM;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Individual {
+public class Individual{
     private String id;
     private String name;
     private String gender;
