@@ -179,6 +179,53 @@ public class Individual {
         }
         return this.birthday.before(this.death_date);
     }
+    
+    public boolean isDivorceBeforeDeath(Individual spouse){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.length == 0){
+            return false;
+        }
+    
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male")?id: spouse.id;
+        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        Family ourFamily = null;
+        for (Family f : families) {
+            if(f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)){
+                ourFamily = f;
+                break;
+            }
+        }
+        if(ourFamily == null){
+            return false;
+        }
+        Date divorceDate = ourFamily.getDivorceDate();
+    
+        if(divorceDate == null){
+            return false;
+        }
+        
+        Date deathDateHusband;
+        Date deathDateWife;
+        if(husbandID.equals(id)){
+            deathDateWife = spouse.death_date;
+            deathDateHusband = this.death_date;
+        }else{
+            deathDateWife = this.death_date;
+            deathDateHusband = spouse.death_date;
+    
+        }
+        if(deathDateHusband == null && deathDateWife == null){
+            return true;
+        }
+        if(deathDateHusband == null) {
+            return divorceDate.before(deathDateWife);
+        }
+        if(deathDateWife == null){
+            return divorceDate.before(deathDateHusband);
+        }
+        return divorceDate.before(deathDateHusband) && divorceDate.before(deathDateWife);
+    }
+
 
     public boolean uniqueNameAndBirthDate() {
         //base case checking individual and husband and wife
