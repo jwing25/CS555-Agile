@@ -325,7 +325,13 @@ public class GEDCOM {
 		String id, name, gender, birthday, age, alive, deathdate, child, spouse;
 		// TODO: Print in ID order
 		Collections.sort(individuals, (Individual i1, Individual i2) -> {
-			return i1.getId().compareTo(i2.getId());
+			if (i1.getId().length() > i2.getId().length()) {
+				return 1;
+			} else if (i1.getId().length() < i2.getId().length()) {
+				return -1;
+			} else {
+				return i1.getId().compareTo(i2.getId());
+			}
 		});
 		for (Individual i : individuals) {
 			id = i.getId() != null ? i.getId() : "N/A";
@@ -354,6 +360,15 @@ public class GEDCOM {
 		System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 		String id, marriagedate, divorcedate, husband_id, husband_name, wife_id, wife_name, children;
 		// TODO: Print in ID order
+		Collections.sort(families, (Family f1, Family f2) -> {
+			if (f1.getId().length() > f2.getId().length()) {
+				return 1;
+			} else if (f1.getId().length() < f2.getId().length()) {
+				return -1;
+			} else {
+				return f1.getId().compareTo(f2.getId());
+			}
+		});
 		for (Family fam : families) {
 			id = fam.getId() != null ? fam.getId() : "N/A";
 			husband_id = fam.getHusbandId() != null ? fam.getHusbandId() : "N/A";
