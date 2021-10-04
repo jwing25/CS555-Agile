@@ -3,6 +3,7 @@ package tests;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,25 +24,33 @@ public class DatesTest {
     @BeforeAll
     public static void init() {
         try {
+            ArrayList<String> spouse1 = new ArrayList<String>();
+            spouse1.add("spouse1");
+
+            ArrayList<String> spouse2 = new ArrayList<String>();
+            spouse2.add("spouse2");
+            spouse2.add("spouse3");
+            spouse2.add("spouse4");
+
             husband1 = new Individual("husband1","husband1","Male",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1923" ),
-                    98 ,true,null,null,new String[1]);
+                    98 ,true,null,null, spouse1);
 
             husband2 = new Individual("123", "Justin", "Male",
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1950"),
                     71, false,
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/2021"),
-                    null, new String[1]);
+                    null, spouse1);
 
             wife1 = new Individual("wife1","wife1","Female",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1953" ),
-                    74 ,true,null,null,new String[1]);
+                    74 ,true,null,null, spouse1);
 
             wife2 = new Individual("456", "Queen Elizabeth", "Female",
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1900"),
                     80, false,
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1980"),
-                    null, new String[3]);
+                    null, spouse2);
 
         } catch (ParseException e) {
             e.printStackTrace();

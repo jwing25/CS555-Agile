@@ -107,7 +107,7 @@ public class GEDCOM {
 		String level = array[0], tag, arguments = "";
 
 		// Special format for INDI and FAM tags
-		if (line.contains("INDI") || line.contains("FAM")) {
+		if (array.length > 2 && (array[2].compareTo("INDI") == 0 || array[2].compareTo("FAM") == 0)) {
 			tag = array[2];
 			arguments += array[1];
 			if (array.length > 3) {
@@ -146,7 +146,7 @@ public class GEDCOM {
 					indi = new Individual(current.arguments);
 				}
 			} else {
-				if (current.level.compareTo("0") == 0) { // End of individual
+				if (current.level.compareTo("0") == 0 || i == lines.size() - 1) { // End of individual
 					// Set alive status
 					if (indi.getDeath() == null) {
 						indi.setAlive(true);
@@ -155,10 +155,14 @@ public class GEDCOM {
 					}
 					
 					// Set age
-					SimpleDateFormat f = new SimpleDateFormat("yyyMMdd");
-					int date1 = Integer.parseInt(f.format(currentdate));
-					int date2 = Integer.parseInt(f.format(indi.getBirthday()));
-					indi.setAge((date1 - date2) / 10000);
+					try {
+						SimpleDateFormat f = new SimpleDateFormat("yyyMMdd");
+						int date1 = Integer.parseInt(f.format(currentdate));
+						int date2 = Integer.parseInt(f.format(indi.getBirthday()));
+						indi.setAge((date1 - date2) / 10000);
+					} catch (Exception e) {
+						// do nothing
+					}
 
 					// Add individual to list
 					GEDCOM.individuals.add(indi);
@@ -196,13 +200,22 @@ public class GEDCOM {
 						}
 						break;
 					case "DEAT":
+						indi.setAlive(false);
 						Line deathline = parseLine(lines.get(i+1));
-						try {
-							Date deathdate = new SimpleDateFormat("dd/MMM/yyyy").parse(deathline.arguments.replaceAll(" ", "/"));
-							indi.setDeath(deathdate);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (deathline.tag.compareTo("DATE") == 0) {
+							try {
+								Date deathdate = new SimpleDateFormat("dd/MMM/yyyy").parse(deathline.arguments.replaceAll(" ", "/"));
+								indi.setDeath(deathdate);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
+						break;
+					case "FAMC":
+						indi.addChildOf(current.arguments);
+						break;
+					case "FAMS":
+						indi.addSpouse(current.arguments);
 						break;
 					default: 
 						break;
@@ -234,20 +247,36 @@ public class GEDCOM {
 
 	public static void printIndividuals() {
 		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
-		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH");
-		System.out.println("-----------------------------------------------------------------------------------");
-		String birthday = "";
-		String deathdate = "";
-		// TODO: Print in ID order and print Children and Spouse(s)
+		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH", "CHILD", "SPOUSE");
+		System.out.println("-------------------------------------------------------------------------------------------------------------");
+		String birthday, deathdate, child, spouse;
+		// TODO: Print in ID order
 		for (Individual i : individuals) {
-			birthday = f.format(i.getBirthday());
+			if (i.getBirthday() != null) {
+				birthday = f.format(i.getBirthday());
+			} else {
+				birthday = "N/A";
+			}
 			if (i.getAlive()) {
 				deathdate = "N/A";
 			} else {
 				deathdate = f.format(i.getDeath());
 			}
-			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s \n", i.getId(), i.getName(), i.getGender(), 
-				birthday, i.getAge(), i.getAlive(), deathdate);
+			child = i.getChildren().size() == 0 ? "N/A" : i.getChildren().toString();
+			spouse= i.getSpouse().size() == 0 ? "N/A" : i.getSpouse().toString();
+			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", i.getId(), i.getName(), i.getGender(), 
+				birthday, i.getAge(), i.getAlive(), deathdate, child, spouse);
+		}
+    }
+
+	public static void printFamilies() {
+		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
+		System.out.format("%5s | %12s | %12s | %12s | %20s | %10s | %20s | %20s \n", "ID", "MARRIED", "DIVORCED", "HUSBAND ID", "HUSBAND NAME", "WIFE ID", "WIFE NAME", "CHILDREN");
+		System.out.println("-----------------------------------------------------------------------------------");
+		// TODO: Print in ID order
+		for (Family fam : families) {
+			System.out.format("%5s | %12s | %12s | %12s | %20s | %10s | %20s | %20s \n", fam.getId(), fam.getMarriageDate(), fam.getDivorceDate(), 
+				fam.getHusbandId(), fam.getHusbandId(), fam.getWifeId(), fam.getWifeName(), fam.getChildren());
 		}
     }
 
@@ -279,6 +308,7 @@ public class GEDCOM {
 		// 	System.out.println(current);
 		// }
 
+		// Print individuals
 		parser.getIndividuals(lines);
 		printIndividuals();
     }
