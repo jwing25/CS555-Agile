@@ -98,8 +98,8 @@ public class DivorceBeforeDeathTest {
     void test4() {
         try {
             GEDCOM.families.add(new Family("1",
-                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1980"),
-                    new SimpleDateFormat("dd/MM/yyyy").parse("23/12/1979"),
+                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1975"),
+                    new SimpleDateFormat("dd/MM/yyyy").parse("23/12/1980"),
                     husband2.getId(),husband2.getName(),wife2.getId(),wife2.getName(), null));
         } catch (ParseException e) {
             e.printStackTrace();
