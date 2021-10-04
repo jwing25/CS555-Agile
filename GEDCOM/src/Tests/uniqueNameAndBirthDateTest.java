@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.text.SimpleDateFormat;
 
 import GEDCOM.Individual;
-import GEDCOM.GEDCOM;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
