@@ -15,6 +15,10 @@ public class Individual {
     private String[] children;
     private String[] spouse;
 
+    public Individual(String id) {
+        this.id = id;
+    }
+
     public Individual(String id, String name, String gender, Date birthday, int age, 
                     Boolean is_alive, Date death_date, String[] children, String[] spouse) {
         this.id = id;

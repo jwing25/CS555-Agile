@@ -1,6 +1,8 @@
 package GEDCOM;
 
 import java.io.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class GEDCOM {
 			this.level = level;
 			this.tag = tag;
 			this.isValid = isValid;
-			this.arguments = arguments;
+			this.arguments = arguments.trim();
 		}
 
 		public String toString() {
@@ -128,8 +130,84 @@ public class GEDCOM {
 	}
 
 	private void getIndividuals(ArrayList<String> lines) {
-		for (String line : lines) {
-			Line parsed_line = parseLine(line);
+		Line current;
+		Individual indi = null;
+		Date currentdate = new Date();
+		for (int i = 0; i < lines.size(); i++) {
+			current = parseLine(lines.get(i));
+
+			// If line is invalid, skip
+			if (!current.isValid) {
+				continue;
+			}
+
+			if (indi == null) {
+				if (current.tag.compareTo("INDI") == 0) {
+					indi = new Individual(current.arguments);
+				}
+			} else {
+				if (current.level.compareTo("0") == 0) { // End of individual
+					// Set alive status
+					if (indi.getDeath() == null) {
+						indi.setAlive(true);
+					} else {
+						indi.setAlive(false);
+					}
+					
+					// Set age
+					SimpleDateFormat f = new SimpleDateFormat("yyyMMdd");
+					int date1 = Integer.parseInt(f.format(currentdate));
+					int date2 = Integer.parseInt(f.format(indi.getBirthday()));
+					indi.setAge((date1 - date2) / 10000);
+
+					// Add individual to list
+					GEDCOM.individuals.add(indi);
+
+					// Create new individual
+					if (current.tag.compareTo("INDI") == 0) {
+						indi = new Individual(current.arguments);
+					} else {
+						indi = null;
+					}
+					continue;
+				}
+				switch (current.tag) {
+					case "INDI":
+						GEDCOM.individuals.add(indi);
+						indi = null;
+						break;
+					case "FAM":
+						GEDCOM.individuals.add(indi);
+						indi = null;
+						break;
+					case "NAME":
+						indi.setName(current.arguments);
+						break;
+					case "SEX":
+						indi.setGender(current.arguments);
+						break;
+					case "BIRT":
+						Line birthline = parseLine(lines.get(i+1));
+						try {
+							Date birthday = new SimpleDateFormat("dd/MMM/yyyy").parse(birthline.arguments.replaceAll(" ", "/"));
+							indi.setBirthday(birthday);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+					case "DEAT":
+						Line deathline = parseLine(lines.get(i+1));
+						try {
+							Date deathdate = new SimpleDateFormat("dd/MMM/yyyy").parse(deathline.arguments.replaceAll(" ", "/"));
+							indi.setDeath(deathdate);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+					default: 
+						break;
+				}
+			}
 		}
 	}
 
@@ -154,6 +232,25 @@ public class GEDCOM {
 		return true;
 	}
 
+	public static void printIndividuals() {
+		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
+		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH");
+		System.out.println("-----------------------------------------------------------------------------------");
+		String birthday = "";
+		String deathdate = "";
+		// TODO: Print in ID order and print Children and Spouse(s)
+		for (Individual i : individuals) {
+			birthday = f.format(i.getBirthday());
+			if (i.getAlive()) {
+				deathdate = "N/A";
+			} else {
+				deathdate = f.format(i.getDeath());
+			}
+			System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s \n", i.getId(), i.getName(), i.getGender(), 
+				birthday, i.getAge(), i.getAlive(), deathdate);
+		}
+    }
+
     public static void main(String[] args) {
 		GEDCOM parser = new GEDCOM();
 
@@ -174,12 +271,15 @@ public class GEDCOM {
 		// Read file
 		ArrayList<String> lines = parser.readFile(file);
 
-		Line current;
-		// Parse each line
-		for (String line : lines) {
-			System.out.println("--> " + line);
-			current = parser.parseLine(line);
-			System.out.println(current);
-		}
+		// Line current;
+		// // Parse each line
+		// for (String line : lines) {
+		// 	System.out.println("--> " + line);
+		// 	current = parser.parseLine(line);
+		// 	System.out.println(current);
+		// }
+
+		parser.getIndividuals(lines);
+		printIndividuals();
     }
 }

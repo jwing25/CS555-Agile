@@ -12,6 +12,8 @@ public class Family {
     private String wife_name;
     private String[] children;
 
+    public Family() { }
+
     public Family(String id, Date marriage_date, Date divorce_date, String husband_id, 
                 String husband_name, String wife_id, String wife_name, String[] children) {
         this.id = id;
