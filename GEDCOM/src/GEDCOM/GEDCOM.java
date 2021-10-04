@@ -73,7 +73,7 @@ public class GEDCOM {
 	 * @param file
 	 * @return An ArrayList of each line as a String
 	 */
-	private ArrayList<String> readFile(File file) {
+	private static ArrayList<String> readFile(File file) {
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
 			Scanner input = new Scanner(file);
@@ -384,6 +384,73 @@ public class GEDCOM {
 		System.out.println("");
     }
 
+	/**
+     * Checks if a line is a date
+     * @param line The line to parse
+     * @return The date if the tag is DATE, null otherwise.
+     */
+	public static Date getDate(String line) {
+		String[] array = line.split(" ");
+		String tag, arguments = "";
+
+        // Special format for INDI and FAM tags
+		if (line.contains("INDI") || line.contains("FAM")) {
+			tag = array[2];
+			if (array.length > 3) {
+				for (int i = 3; i < array.length; i++) {
+					System.out.println(array[i]);
+					arguments += array[i] + " ";
+				}
+			}
+		} else {
+			tag = array[1];
+			if (array.length > 2) {
+				for (int i = 2; i < array.length; i++) {
+					arguments += array[i] + " ";
+				}
+			}
+		}
+
+		Date date;
+        if (tag.equals("DATE")) {
+            String[] date_arr = arguments.split(" ");
+            String date_string = date_arr[0] + "/" + date_arr[1] + "/" + date_arr[2];
+            try {
+                date = new SimpleDateFormat("dd/MMM/yyyy").parse(date_string);
+            } catch (Exception e) {
+                e.printStackTrace();
+                date = null;
+            }
+        } else {
+            date = null;
+        }
+        return date;
+	}
+
+	/**
+	 * Checks if the date is before the current date
+	 * @param file
+	 * @return True if the date is before the current date, false if the date is after the current date
+	 */
+	public static Boolean checkDates(File file) {
+		Date current_date = new Date();
+        // System.out.println("The current date is: " + current_date);
+
+        ArrayList<String> lines = readFile(file);
+        Date date;
+		Boolean valid = true;
+        for (String line : lines) {
+            date = getDate(line);
+            if (date != null) {
+                if (date.after(current_date)) {
+					valid = false;
+					break;
+				}
+            }
+        }
+		return valid;
+	}
+
     public static void main(String[] args) {
 		GEDCOM parser = new GEDCOM();
 
@@ -402,7 +469,7 @@ public class GEDCOM {
 		input.close();
 
 		// Read file
-		ArrayList<String> lines = parser.readFile(file);
+		ArrayList<String> lines = GEDCOM.readFile(file);
 
 		// Line current;
 		// // Parse each line
