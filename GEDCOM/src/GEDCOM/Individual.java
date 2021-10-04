@@ -1,6 +1,10 @@
 package GEDCOM;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -240,4 +244,60 @@ public class Individual {
         }
         return true;
     }
+
+    public boolean isBirthBeforeDeathOfParents() {
+        ArrayList<Family> families = GEDCOM.families;
+        Family ourFamily = null;
+        familyLookUp:for (Family f : families) {
+            for (String child: f.getChildren()) {
+                if (child.equals(this.name)){
+                    ourFamily = f;
+                    break familyLookUp;
+                }
+            }
+        }
+        if (ourFamily == null) {
+            return false;
+        }
+        String dadID = ourFamily.getHusbandId();
+        String momID = ourFamily.getWifeId();
+        ArrayList<Individual> individuals = GEDCOM.individuals;
+        Individual dad = null;
+        Individual mom = null;
+        for (Individual individual: individuals) {
+            if(individual.getId().equals(dadID)){
+                dad = individual;
+            }
+        }
+        for (Individual individual: individuals) {
+            if(individual.getId().equals(momID)){
+                mom = individual;
+            }
+        }
+        boolean birthBeforeMomDeath;
+        boolean birthBeforeDadDeath;
+        if(mom == null || mom.death_date == null){
+            birthBeforeMomDeath = true;
+        }else{
+            birthBeforeMomDeath = this.birthday.before(mom.death_date);
+        }
+
+        if(dad == null || dad.death_date == null ){
+            birthBeforeDadDeath = true;
+        }else {
+            Period period = Period.between(convertToLocalDateViaInstant(birthday),
+                    convertToLocalDateViaInstant(dad.death_date));
+            int months = period.getMonths() + period.getYears()*12;
+            birthBeforeDadDeath = months >= 9;
+        }
+        return birthBeforeDadDeath && birthBeforeMomDeath;
+    }
+
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+
 }
