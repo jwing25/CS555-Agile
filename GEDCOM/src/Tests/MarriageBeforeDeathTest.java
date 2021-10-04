@@ -1,4 +1,4 @@
-package tests;
+package Tests;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,7 +15,7 @@ import GEDCOM.Family;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class DatesTest {
+public class MarriageBeforeDeathTest {
     public static Individual husband1;
     public static Individual husband2;
     public static Individual wife1;
@@ -59,7 +59,6 @@ public class DatesTest {
 
     @Test
     void test1() {
-        // Date is good; valid
         try {
             GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1950"),null,
@@ -74,7 +73,6 @@ public class DatesTest {
 
     @Test
     void test2() {
-        // Date is from future; not valid
         try {
             GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1950"),null,
@@ -89,7 +87,6 @@ public class DatesTest {
 
     @Test
     void test3() {
-        // Date is from future; not valid
         try {
             GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/2022"),null,
@@ -104,7 +101,6 @@ public class DatesTest {
 
     @Test
     void test4() {
-        // Date is good; valid
         try {
             GEDCOM.families.add(new Family("1",
                     new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1990"),null,
