@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import GEDCOM.GEDCOM;
 
-class UniqueDatesTest {
+class DatesBeforeCurrent {
 	
 	File file1 = new File("/test.ged");
 	File file2 = new File("/test2.ged");
