@@ -10,18 +10,30 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import GEDCOM.GEDCOM;
 
 class DatesBeforeCurrent {
 	
-	File file1 = new File("/test.ged");
-	File file2 = new File("/test2.ged");
-	File file3 = new File("/test3.ged");
+	static File file1;
+	static File file2;
+	static File file3;
 	
 	static Date current_date = new Date();
 	static Calendar calendar = Calendar.getInstance();
+
+	@BeforeAll
+    public static void init() {
+		try {
+			file1 = new File("test.ged");
+			file2 = new File("test2.ged");
+			file3 = new File("test3.ged");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 	
 	private static void changeDatesToCurrent(File file) {
 		// Main logic followed from: https://stackoverflow.com/questions/20039980/java-replace-line-in-text-file
