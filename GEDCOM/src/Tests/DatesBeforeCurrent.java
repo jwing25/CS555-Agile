@@ -13,7 +13,7 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import GEDCOM.GEDCOM;
+import GEDCOM.Dates;
 
 class DatesBeforeCurrent {
 	
@@ -69,28 +69,43 @@ class DatesBeforeCurrent {
 
 	@Test
 	void testCheckDatesValid() {
-		assertTrue(GEDCOM.checkDates(file1));
+		assertTrue(Dates.checkDates(file1));
 	}
 	
 	@Test
 	void testCheckDatesInvalid() {
-		assertFalse(GEDCOM.checkDates(file2));
+		assertFalse(Dates.checkDates(file2));
 	}
 	
 	@Test
 	void testCheckDatesCurrentDate() {
 		// Change dates of file3 to the current date
 		changeDatesToCurrent(file3);
-		assertTrue(GEDCOM.checkDates(file3));
+		assertTrue(Dates.checkDates(file3));
 	}
 	
 	@Test
 	void testParseLine() {
-		assertEquals(GEDCOM.getDate("0 DATE 5 APR 2020").toString(), "Sun Apr 05 00:00:00 EDT 2020");
+		assertEquals(Dates.getDate("0 DATE 5 APR 2020").toString(), "Sun Apr 05 00:00:00 EDT 2020");
+	}
+	
+	
+	@Test
+	void testParseLineNull1() {
+		assertNull(Dates.getDate("0 NOTE dates after now"));
+	}
+
+	@Test
+	void testParseLineNull2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Dates.getDate("");
+		});
 	}
 	
 	@Test
-	void testParseLineNull() {
-		assertNull(GEDCOM.getDate("0 NOTE dates after now"));
+	void testParseLineNull3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Dates.getDate(null);
+		});
 	}
 }
