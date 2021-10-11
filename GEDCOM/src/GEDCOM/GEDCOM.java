@@ -20,7 +20,7 @@ public class GEDCOM {
 	public static ArrayList<Individual> individuals = new ArrayList<Individual>();
 	public static ArrayList<Family> families = new ArrayList<Family>();
 
-	private class Line {
+	public static class Line {
 		public String level;
 		public String tag;
 		public boolean isValid;
@@ -73,7 +73,7 @@ public class GEDCOM {
 	 * @param file
 	 * @return An ArrayList of each line as a String
 	 */
-	private static ArrayList<String> readFile(File file) {
+	public static ArrayList<String> readFile(File file) {
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
 			Scanner input = new Scanner(file);
@@ -95,7 +95,7 @@ public class GEDCOM {
 	 * @param tag The tag to check (key)
 	 * @return true if it is a valid pair, false if it is not a valid pair.
 	 */
-	private boolean checkValid(String level, String tag) {
+	private static boolean checkValid(String level, String tag) {
 		return (valid.get(tag) != null && valid.get(tag).equals(level)) ? true : false;
 	}
 
@@ -103,7 +103,11 @@ public class GEDCOM {
 	 * Parses a line into a 
 	 * @param line The line to parse
 	 */
-	private Line parseLine(String line) {
+	public Line parseLine(String line) {
+		if (line == null || line == "") {
+			throw new IllegalArgumentException("parseLine: line is null or empty");
+		}
+		
 		String[] array = line.split(" ");
 		String level = array[0], tag, arguments = "";
 
@@ -126,8 +130,9 @@ public class GEDCOM {
 			}
 		}
 		boolean isValid = checkValid(level, tag);
-
-		return new Line(level, tag, isValid, arguments);
+		
+		Line parsed_line = new Line(level, tag, isValid, arguments);
+		return parsed_line;
 	}
 
 	private void getIndividuals(ArrayList<String> lines) {
@@ -323,7 +328,6 @@ public class GEDCOM {
 		System.out.format("%5s | %20s | %6s | %12s | %4s | %6s | %12s | %10s | %10s \n", "ID", "NAME", "GENDER", "BIRTHDAY", "AGE", "ALIVE", "DEATH", "CHILD", "SPOUSE");
 		System.out.println("-------------------------------------------------------------------------------------------------------------");
 		String id, name, gender, birthday, age, alive, deathdate, child, spouse;
-		// TODO: Print in ID order
 		Collections.sort(individuals, (Individual i1, Individual i2) -> {
 			if (i1.getId().length() > i2.getId().length()) {
 				return 1;
@@ -359,7 +363,6 @@ public class GEDCOM {
 		System.out.format("%5s | %12s | %12s | %10s | %20s | %8s | %20s | %16s \n", "ID", "MARRIED", "DIVORCED", "HUSBAND ID", "HUSBAND NAME", "WIFE ID", "WIFE NAME", "CHILDREN");
 		System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 		String id, marriagedate, divorcedate, husband_id, husband_name, wife_id, wife_name, children;
-		// TODO: Print in ID order
 		Collections.sort(families, (Family f1, Family f2) -> {
 			if (f1.getId().length() > f2.getId().length()) {
 				return 1;
@@ -384,76 +387,8 @@ public class GEDCOM {
 		System.out.println("");
     }
 
-	/**
-     * Checks if a line is a date
-     * @param line The line to parse
-     * @return The date if the tag is DATE, null otherwise.
-     */
-	public static Date getDate(String line) {
-		String[] array = line.split(" ");
-		String tag, arguments = "";
-
-        // Special format for INDI and FAM tags
-		if (line.contains("INDI") || line.contains("FAM")) {
-			tag = array[2];
-			if (array.length > 3) {
-				for (int i = 3; i < array.length; i++) {
-					System.out.println(array[i]);
-					arguments += array[i] + " ";
-				}
-			}
-		} else {
-			tag = array[1];
-			if (array.length > 2) {
-				for (int i = 2; i < array.length; i++) {
-					arguments += array[i] + " ";
-				}
-			}
-		}
-
-		Date date;
-        if (tag.equals("DATE")) {
-            String[] date_arr = arguments.split(" ");
-            String date_string = date_arr[0] + "/" + date_arr[1] + "/" + date_arr[2];
-            try {
-                date = new SimpleDateFormat("dd/MMM/yyyy").parse(date_string);
-            } catch (Exception e) {
-                e.printStackTrace();
-                date = null;
-            }
-        } else {
-            date = null;
-        }
-        return date;
-	}
-
-	/**
-	 * Checks if the date is before the current date
-	 * @param file
-	 * @return True if the date is before the current date, false if the date is after the current date
-	 */
-	public static Boolean checkDates(File file) {
-		Date current_date = new Date();
-        // System.out.println("The current date is: " + current_date);
-
-        ArrayList<String> lines = readFile(file);
-        Date date;
-		Boolean valid = true;
-        for (String line : lines) {
-            date = getDate(line);
-            if (date != null) {
-                if (date.after(current_date)) {
-					valid = false;
-					break;
-				}
-            }
-        }
-		return valid;
-	}
-
     public static void main(String[] args) {
 		GEDCOM parser = new GEDCOM();
-
 		// Ask for user input
 		Scanner input = new Scanner(System.in);
 		File file;
