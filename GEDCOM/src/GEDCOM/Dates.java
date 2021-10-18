@@ -38,17 +38,17 @@ public class Dates {
 	}
 
 	/**
-	 * Checks if the date is before the current date
+	 * Checks if dates in Individuals and Families are before the current date
 	 * @param file
 	 * @return True if the date is before the current date, false if the date is after the current date
 	 */
 	public static Boolean checkDates(File file) {
 		Date current_date = new Date();
         // System.out.println("The current date is: " + current_date);
-
+        
+        Boolean valid = true;
         ArrayList<String> lines = GEDCOM.readFile(file);
         Date date;
-		Boolean valid = true;
         for (String line : lines) {
             date = getDate(line);
             if (date != null) {
@@ -56,6 +56,24 @@ public class Dates {
 					valid = false;
 					break;
 				}
+            }
+        }
+        
+        // Error messages
+        for (Individual i : GEDCOM.individuals) {
+            if (i.getBirthday().after(current_date)) {
+                System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Birthday on " + i.getBirthday() + " occurs after the current date.");
+            }
+            if (i.getDeath().after(current_date)) {
+                System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Death on " + i.getDeath() + " occurs after the current date.");
+            }
+        }
+        for (Family f : GEDCOM.families) {
+            if (f.getMarriageDate().after(current_date)) {
+                System.out.println("ERROR: FAMILY " + f.getId() + " - Marriage on " + f.getMarriageDate() + " occurs after the current date.");
+            }
+            if (f.getDivorceDate().after(current_date)) {
+                System.out.println("ERROR: FAMILY " + f.getId() + " - Divorce on " + f.getDivorceDate() + " occurs after the current date.");
             }
         }
 		return valid;
