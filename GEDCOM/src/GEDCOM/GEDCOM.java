@@ -430,5 +430,11 @@ public class GEDCOM {
 
 		parser.getFamilies(lines);
 		printFamilies();
+
+		// US01 - Dates before current date
+		Dates.checkDates(file);
+
+		// US22 - Unique IDs
+		checkUniqueIds();
     }
 }
