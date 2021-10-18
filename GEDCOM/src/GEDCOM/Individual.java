@@ -2,6 +2,8 @@ package GEDCOM;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Individual{
     private String id;
@@ -122,17 +124,16 @@ public class Individual{
         String husbandID = this.gender.equals("Male")?id: spouse.id;
         String wifeID = this.gender.equals("Female")?id: spouse.id;
         Family ourFamily = null;
-        for (Family f : families) {
-            if(f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)){
-                ourFamily = f;
-                break;
-            }
-        }
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
         if(ourFamily == null){
             return false;
         }
         Date marriageDate = ourFamily.getMarriageDate();
 
+        return marriageAndaDeathCompare(spouse, husbandID, marriageDate);
+    }
+
+    private boolean marriageAndaDeathCompare(Individual spouse, String husbandID, Date marriageDate) {
         Date deathDateHusband;
         Date deathDateWife;
         if(husbandID.equals(id)){
@@ -155,21 +156,22 @@ public class Individual{
         return marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
     }
 
-    public boolean isTheMarriageBeforeDivorce(Individual spouse) {
-        if (spouse == null || spouse.spouse == null || spouse.spouse.size() == 0) {
-            return false;
-        }
-
-        ArrayList<Family> families = GEDCOM.families;
-        String husbandID = this.gender.equals("Male") ? id : spouse.id;
-        String wifeID = this.gender.equals("Female") ? id : spouse.id;
-        Family ourFamily = null;
+    private Family getFamily(ArrayList<Family> families, String husbandID, String wifeID, Family ourFamily) {
         for (Family f : families) {
             if (f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)) {
                 ourFamily = f;
                 break;
             }
         }
+        return ourFamily;
+    }
+
+    public boolean isTheMarriageBeforeDivorce(Individual spouse) {
+        if (spouse == null || spouse.spouse == null || spouse.spouse.size() == 0) {
+            return false;
+        }
+
+        Family ourFamily = getFamily(spouse);
         if (ourFamily == null) {
             return false;
         }
@@ -183,6 +185,39 @@ public class Individual{
         }
     }
 
+    private Family getFamily(Individual spouse) {
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male") ? id : spouse.id;
+        String wifeID = this.gender.equals("Female") ? id : spouse.id;
+        Family ourFamily = null;
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
+        return ourFamily;
+    }
+
+    private Family getBioMotherFamily() {
+        ArrayList<Family> families = GEDCOM.families;
+        String personID = id;
+        Family ourFamily = null;
+        for (Family f : families) {
+            // is child and is a mother
+            if (f.getChildren().contains(personID) && f.getHusbandId() != null ) {
+                ourFamily = f;
+                break;
+            }
+        }
+        return ourFamily;
+    }
+
+    private Individual getIndividual(String id) {
+        ArrayList<Individual> individuals = GEDCOM.individuals;
+        for (Individual i : individuals) {
+            // is child and is a mother
+            if (i.id.equals(id)) {
+                return i;
+            }
+        }
+        return null;
+    }
     public boolean isBirthBeforeDeath() {
         if (this.death_date == null) {
             return true;
@@ -206,6 +241,7 @@ public class Individual{
         }
         return true;
     }
+
     public boolean isDivorceBeforeDeath(Individual spouse){
         if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
             return false;
@@ -215,12 +251,7 @@ public class Individual{
         String husbandID = this.gender.equals("Male")?id: spouse.id;
         String wifeID = this.gender.equals("Female")?id: spouse.id;
         Family ourFamily = null;
-        for (Family f : families) {
-            if(f.getHusbandId().equals(husbandID) && f.getWifeId().equals(wifeID)){
-                ourFamily = f;
-                break;
-            }
-        }
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
         if(ourFamily == null){
             return false;
         }
@@ -229,27 +260,27 @@ public class Individual{
         if(divorceDate == null){
             return false;
         }
-        
-        Date deathDateHusband;
-        Date deathDateWife;
-        if(husbandID.equals(id)){
-            deathDateWife = spouse.death_date;
-            deathDateHusband = this.death_date;
-        }else{
-            deathDateWife = this.death_date;
-            deathDateHusband = spouse.death_date;
-    
-        }
-        if(deathDateHusband == null && deathDateWife == null){
-            return true;
-        }
-        if(deathDateHusband == null) {
-            return divorceDate.before(deathDateWife);
-        }
-        if(deathDateWife == null){
-            return divorceDate.before(deathDateHusband);
-        }
-        return divorceDate.before(deathDateHusband) && divorceDate.before(deathDateWife);
+
+        return marriageAndaDeathCompare(spouse, husbandID, divorceDate);
     }
+
+    public boolean isSpacedSiblings(){
+        Family family = getBioMotherFamily();
+        HashMap<Date,ArrayList<String>> mapOfBDayAndName = new HashMap<>();
+        for (String id : family.getChildren()) {
+            Individual sibling = getIndividual(id);
+            if(!mapOfBDayAndName.containsKey(sibling.getBirthday())){
+                mapOfBDayAndName.put(sibling.getBirthday(),new ArrayList<>());
+            }
+            mapOfBDayAndName.get(sibling.getBirthday()).add(sibling.name);
+        }
+        for (Map.Entry<Date, ArrayList<String>> entry : mapOfBDayAndName.entrySet()) {
+            if(entry.getValue().size() >= 5){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
 
