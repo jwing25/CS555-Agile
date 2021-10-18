@@ -302,24 +302,34 @@ public class GEDCOM {
 	}
 
 	public static boolean checkUniqueIds() {
-		ArrayList<String> individual_ids = new ArrayList<String>();
+		boolean unique = true;
+		ArrayList<String> ids = new ArrayList<String>();
 		for (Individual i : individuals) {
-			individual_ids.add(i.getId());
+			if (ids.contains(i.getId())) {
+				unique = false;
+				System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Duplicate ID.");
+			} else {
+				ids.add(i.getId());
+			}
 		}
 
-		ArrayList<String> family_ids = new ArrayList<String>();
 		for (Family f : families) {
-			family_ids.add(f.getId());
+			if (ids.contains(f.getId())) {
+				unique = false;
+				System.out.println("ERROR: FAMILY " + f.getId() + " - Duplicate ID.");
+			} else {
+				ids.add(f.getId());
+			}
 		}
 
 		// Put ids into hash sets and compare sizes
-		HashSet<String> individual_set = new HashSet<String>(individual_ids);
-		HashSet<String> family_set = new HashSet<String>(family_ids);
+		// HashSet<String> individual_set = new HashSet<String>(individual_ids);
+		// HashSet<String> family_set = new HashSet<String>(family_ids);
+		// if (individual_set.size() < individual_ids.size() || family_set.size() < family_ids.size()) {
+		// 	return false;
+		// }
 
-		if (individual_set.size() < individual_ids.size() || family_set.size() < family_ids.size()) {
-			return false;
-		}
-		return true;
+		return unique;
 	}
 
 	public static void printIndividuals() {
@@ -420,5 +430,11 @@ public class GEDCOM {
 
 		parser.getFamilies(lines);
 		printFamilies();
+
+		// US01 - Dates before current date
+		Dates.checkDates(file);
+
+		// US22 - Unique IDs
+		checkUniqueIds();
     }
 }

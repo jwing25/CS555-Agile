@@ -16,10 +16,12 @@ public class UniqueIdsTest {
     public static Individual i2;
     public static Individual i3;
     public static Individual i4;
+    public static Individual i5;
 
     public static Family f1;
     public static Family f2;
     public static Family f3;
+    public static Family f4;
 
     @BeforeAll
     public static void init() {
@@ -32,6 +34,8 @@ public class UniqueIdsTest {
                                 21, true, null, null, null);
             i4 = new Individual("I3", "individual2", "F", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
                                 21, true, null, null, null);
+            i5 = new Individual("1", "individual2", "F", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
+            21, true, null, null, null);
 
             f1 = new Family("F1", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
                             null, "I1", "individual1", "I2", "individual2", null);
@@ -39,6 +43,8 @@ public class UniqueIdsTest {
                             null, "I3", "individual1", "I4", "individual2", null);
             f3 = new Family("F2", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
                             null, "I1", "individual1", "I4", "individual2", null);
+            f4 = new Family("1", new SimpleDateFormat("MM/dd/yyyy").parse("1/1/2000"), 
+            null, "I1", "individual1", "I4", "individual2", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,6 +97,32 @@ public class UniqueIdsTest {
         GEDCOM.families.removeAll(GEDCOM.families);
     }
 
+    @Test
+    void test5() {
+        GEDCOM.individuals.add(i1);
+        GEDCOM.individuals.add(i2);
+        GEDCOM.individuals.add(i4);
 
+        GEDCOM.families.add(f1);
+        GEDCOM.families.add(f2);
+
+        boolean is_unique = GEDCOM.checkUniqueIds();
+        assertTrue(is_unique);
+
+        GEDCOM.individuals.removeAll(GEDCOM.individuals);
+        GEDCOM.families.removeAll(GEDCOM.families);
+    }
+
+    @Test
+    void test6() {
+        GEDCOM.individuals.add(i5);
+        GEDCOM.families.add(f4);
+
+        boolean is_unique = GEDCOM.checkUniqueIds();
+        assertFalse(is_unique);
+
+        GEDCOM.individuals.removeAll(GEDCOM.individuals);
+        GEDCOM.families.removeAll(GEDCOM.families);
+    }
 
 }
