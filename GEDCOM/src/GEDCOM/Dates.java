@@ -63,18 +63,18 @@ public class Dates {
         // Error messages
         for (Individual i : GEDCOM.individuals) {
             if (i.getBirthday() != null && i.getBirthday().after(current_date)) {
-                System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Birthday on " + formatter.format(i.getBirthday()) + " occurs after the current date " + formatter.format(current_date) + ".");
+                System.out.println("ERROR: [US01] INDIVIDUAL " + i.getId() + " - Birthday on " + formatter.format(i.getBirthday()) + " occurs after the current date " + formatter.format(current_date) + ".");
             }
             if (i.getDeath() != null && i.getDeath().after(current_date)) {
-                System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Death on " + formatter.format(i.getDeath()) + " occurs after the current date " + formatter.format(current_date) + ".");
+                System.out.println("ERROR: [US01] INDIVIDUAL " + i.getId() + " - Death on " + formatter.format(i.getDeath()) + " occurs after the current date " + formatter.format(current_date) + ".");
             }
         }
         for (Family f : GEDCOM.families) {
             if (f.getMarriageDate() != null && f.getMarriageDate().after(current_date)) {
-                System.out.println("ERROR: FAMILY " + f.getId() + " - Marriage on " + formatter.format(f.getMarriageDate()) + " occurs after the current date " + formatter.format(current_date) + ".");
+                System.out.println("ERROR: [US01] FAMILY " + f.getId() + " - Marriage on " + formatter.format(f.getMarriageDate()) + " occurs after the current date " + formatter.format(current_date) + ".");
             }
             if (f.getDivorceDate() != null && f.getDivorceDate().after(current_date)) {
-                System.out.println("ERROR: FAMILY " + f.getId() + " - Divorce on " + formatter.format(f.getDivorceDate()) + " occurs after the current date " + formatter.format(current_date) + ".");
+                System.out.println("ERROR: [US01] FAMILY " + f.getId() + " - Divorce on " + formatter.format(f.getDivorceDate()) + " occurs after the current date " + formatter.format(current_date) + ".");
             }
         }
 		return valid;

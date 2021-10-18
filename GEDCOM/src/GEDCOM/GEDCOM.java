@@ -307,7 +307,7 @@ public class GEDCOM {
 		for (Individual i : individuals) {
 			if (ids.contains(i.getId())) {
 				unique = false;
-				System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Duplicate ID.");
+				System.out.println("ERROR: [US22] INDIVIDUAL " + i.getId() + " - Duplicate ID.");
 			} else {
 				ids.add(i.getId());
 			}
@@ -316,7 +316,7 @@ public class GEDCOM {
 		for (Family f : families) {
 			if (ids.contains(f.getId())) {
 				unique = false;
-				System.out.println("ERROR: FAMILY " + f.getId() + " - Duplicate ID.");
+				System.out.println("ERROR: [US22] FAMILY " + f.getId() + " - Duplicate ID.");
 			} else {
 				ids.add(f.getId());
 			}
