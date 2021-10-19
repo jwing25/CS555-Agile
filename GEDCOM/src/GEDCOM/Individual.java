@@ -283,8 +283,11 @@ public class Individual{
         if(divorceDate == null){
             return false;
         }
-
-        return marriageAndaDeathCompare(spouse, husbandID, divorceDate);
+        boolean ans = marriageAndaDeathCompare(spouse, husbandID, divorceDate);
+        if (!ans){
+            System.out.println("[ERROR] isDivorceBeforeDeath: Divorce Does not occur before Death for: " + this.id + " on divorce date " + divorceDate.toString()  + " and on death date " + death_date.toString() );
+        }
+        return ans;
     }
 
     public boolean isSpacedSiblings(){

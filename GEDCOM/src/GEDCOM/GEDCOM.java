@@ -2,6 +2,7 @@ package GEDCOM;
 
 import java.io.*;
 import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -397,7 +398,7 @@ public class GEDCOM {
 		System.out.println("");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
 		// Ask for user input
 		Scanner input = new Scanner(System.in);
@@ -436,5 +437,36 @@ public class GEDCOM {
 
 		// US22 - Unique IDs
 		checkUniqueIds();
+
+
+		// US06 - Divorce before death
+		ArrayList<String> spouse1 = new ArrayList<String>();
+		spouse1.add("spouse1");
+		ArrayList<String> spouse2 = new ArrayList<String>();
+		spouse2.add("spouse2");
+		Individual husband1 = new Individual("123", "Justin", "Male",
+		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1950"),
+		71, false,
+		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/2021"),
+		null, spouse1);
+
+		Individual wife2 = new Individual("456", "Queen Elizabeth", "Female",
+		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1900"),
+		80, false,
+		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1980"),
+		null, spouse2);
+
+
+		try {
+            GEDCOM.families.add(new Family("1",
+                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1980"),
+                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/2030"),
+                    husband1.getId(),husband1.getName(),wife2.getId(),wife2.getName(), null));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+		husband1.isDivorceBeforeDeath(wife2);
+	
     }
 }
