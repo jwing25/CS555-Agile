@@ -227,7 +227,7 @@ public class Individual{
         return ourFamily;
     }
 
-    private Individual getIndividual(String id) {
+    public Individual getIndividual(String id) {
         ArrayList<Individual> individuals = GEDCOM.individuals;
         for (Individual i : individuals) {
             // is child and is a mother
