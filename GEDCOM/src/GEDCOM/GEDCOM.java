@@ -447,9 +447,28 @@ public class GEDCOM {
 
 		// Birth Before Death
 		for (Individual i : individuals){
-			i.isBirthBeforeDeath();
-		}	
+			ArrayList<String> spouse_id = i.getSpouse();
+			for(String j: spouse_id){
+				i.isDivorceBeforeDeath(i.getIndividual(j));
+			}
+				}
+		for (Individual i : individuals){
+			ArrayList<String> spouse_id = i.getSpouse();
+			for(String j: spouse_id){
+				i.isTheMarriageBeforeDeath(i.getIndividual(j));
+			}
+				}
 		
+		for (Individual i : individuals){
+			ArrayList<String> spouse_id = i.getSpouse();
+			for(String j: spouse_id){
+				i.isTheMarriageBeforeDivorce(i.getIndividual(j));
+			}
+				}
+		//Unique Name and Birth Date
+		for (Individual i : individuals){
+			i.uniqueNameAndBirthDate();
+		}	
 		
     }
 }
