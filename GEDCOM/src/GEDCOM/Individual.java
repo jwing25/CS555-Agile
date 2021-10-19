@@ -262,7 +262,7 @@ public class Individual{
             boolean ans = id.getName().equals(personName);
             boolean ans2 = id.getBirthday().equals(personBirthDate);
             if (ans == true && ans2 == true) {
-                System.out.println("[ERROR] uniqueNameAndBirthDate: " + this.id + " is not unique.");
+                System.out.println("[ERROR] uniqueNameAndBirthDate: Individual " + this.id + " whose Name: " + personName + ", Birth Date: " + personBirthDate + " has the same name and birth date with Individual: " + this.id + " whose Name: " + personName + ", Birth Date: " + personBirthDate);
             }
             return ans;
         }
