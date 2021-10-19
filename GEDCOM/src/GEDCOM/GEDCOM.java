@@ -449,6 +449,12 @@ public class GEDCOM {
 		for (Individual i : individuals){
 			ArrayList<String> spouse_id = i.getSpouse();
 			for(String j: spouse_id){
+				i.isBirthBeforeDeath();
+			}
+				}
+		for (Individual i : individuals){
+			ArrayList<String> spouse_id = i.getSpouse();
+			for(String j: spouse_id){
 				i.isDivorceBeforeDeath(i.getIndividual(j));
 			}
 				}
