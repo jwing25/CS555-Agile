@@ -258,9 +258,13 @@ public class Individual{
         for (Individual id : individual) {
             String personName = id.name;
             Date personBirthDate = id.birthday;
-            if (id.getName().equals(personName) && id.getBirthday().equals(personBirthDate)) {
-                return false;
+            
+            boolean ans = id.getName().equals(personName);
+            boolean ans2 = id.getBirthday().equals(personBirthDate);
+            if (ans == true && ans2 == true) {
+                System.out.println("[ERROR] uniqueNameAndBirthDate: " + this.id + " is not unique.");
             }
+            return ans;
         }
         return true;
     }
