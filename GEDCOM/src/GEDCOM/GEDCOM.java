@@ -440,33 +440,16 @@ public class GEDCOM {
 
 
 		// US06 - Divorce before death
-		ArrayList<String> spouse1 = new ArrayList<String>();
-		spouse1.add("spouse1");
-		ArrayList<String> spouse2 = new ArrayList<String>();
-		spouse2.add("spouse2");
-		Individual husband1 = new Individual("123", "Justin", "Male",
-		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1950"),
-		71, false,
-		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/2021"),
-		null, spouse1);
 
-		Individual wife2 = new Individual("456", "Queen Elizabeth", "Female",
-		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1900"),
-		80, false,
-		new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1980"),
-		null, spouse2);
+		// for (Individual fam: families){
+		// 	fam.isBirthBeforeDeath();
+		// }
 
-
-		try {
-            GEDCOM.families.add(new Family("1",
-                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/1980"),
-                    new SimpleDateFormat("dd/MM/yyyy").parse("12/02/2030"),
-                    husband1.getId(),husband1.getName(),wife2.getId(),wife2.getName(), null));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-		husband1.isDivorceBeforeDeath(wife2);
-	
+		// Birth Before Death
+		for (Individual i : individuals){
+			i.isBirthBeforeDeath();
+		}	
+		
+		
     }
 }
