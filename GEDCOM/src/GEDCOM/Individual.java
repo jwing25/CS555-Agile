@@ -130,7 +130,6 @@ public class Individual{
         }
         Date marriageDate = ourFamily.getMarriageDate();
         boolean ans = marriageAndaDeathCompare(spouse, husbandID, marriageDate);
-
         return ans;
     }
 
