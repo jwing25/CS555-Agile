@@ -97,4 +97,16 @@ public class Family {
     public void addChild(String childId) {
         this.children.add(childId);
     }
+
+    // US15: Checks if there are fewer than 15 siblings
+    public Boolean fewerThanFifteenSiblings() {
+        if (this.children == null || this.children.isEmpty()) {
+            return true;
+        } else if (this.children.size() < 15) {
+            return true;
+        } else {
+            System.out.println("ERROR: FAMILY " + this.getId() + " - does not have fewer than 15 siblings.");
+            return false;
+        }
+    }
 }

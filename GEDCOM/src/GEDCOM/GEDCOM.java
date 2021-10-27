@@ -436,5 +436,10 @@ public class GEDCOM {
 
 		// US22 - Unique IDs
 		checkUniqueIds();
+
+		// US15 - Fewer than 15 Siblings
+		for (Family f : GEDCOM.families) {
+			f.fewerThanFifteenSiblings();
+		}
     }
 }
