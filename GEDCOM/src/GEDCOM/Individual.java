@@ -1,5 +1,7 @@
 package GEDCOM;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -293,7 +295,7 @@ public class Individual{
         return ans;
     }
 
-    public boolean isSpacedSiblings(){
+    public boolean isMultipleBirth(){
         Family family = getBioMotherFamily();
         HashMap<Date,ArrayList<String>> mapOfBDayAndName = new HashMap<>();
         for (String id : family.getChildren()) {
@@ -308,6 +310,29 @@ public class Individual{
                 return false;
             }
         }
+        return true;
+    }
+
+    public boolean isSpacedSiblings(){
+        Family family = getBioMotherFamily();
+        ArrayList<Date> listOfBirthDays = new ArrayList<>();
+        for (String id : family.getChildren()) {
+            Individual sibling = getIndividual(id);
+            listOfBirthDays.add(sibling.getBirthday());
+        }
+        for (int i = 0; i < listOfBirthDays.size(); i++) {
+            LocalDate date1 = Dates.convertToLocalDateViaInstant(listOfBirthDays.get(i));
+            for (int j = i+1; j < listOfBirthDays.size(); j++) {
+                LocalDate date2 = Dates.convertToLocalDateViaInstant(listOfBirthDays.get(j));
+                long months = ChronoUnit.MONTHS.between(date1, date2);
+                long days = ChronoUnit.DAYS.between(date1, date2);
+
+                if(Math.abs(months) < 8 && Math.abs(days) > 2){
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
