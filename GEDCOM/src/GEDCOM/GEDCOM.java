@@ -2,6 +2,7 @@ package GEDCOM;
 
 import java.io.*;
 import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -307,7 +308,7 @@ public class GEDCOM {
 		for (Individual i : individuals) {
 			if (ids.contains(i.getId())) {
 				unique = false;
-				System.out.println("ERROR: INDIVIDUAL " + i.getId() + " - Duplicate ID.");
+				System.out.println("ERROR: [US22] INDIVIDUAL " + i.getId() + " - Duplicate ID.");
 			} else {
 				ids.add(i.getId());
 			}
@@ -316,7 +317,7 @@ public class GEDCOM {
 		for (Family f : families) {
 			if (ids.contains(f.getId())) {
 				unique = false;
-				System.out.println("ERROR: FAMILY " + f.getId() + " - Duplicate ID.");
+				System.out.println("ERROR: [US22] FAMILY " + f.getId() + " - Duplicate ID.");
 			} else {
 				ids.add(f.getId());
 			}
@@ -397,7 +398,7 @@ public class GEDCOM {
 		System.out.println("");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
 		// Ask for user input
 		Scanner input = new Scanner(System.in);
@@ -440,6 +441,24 @@ public class GEDCOM {
 		// US15 - Fewer than 15 Siblings
 		for (Family f : GEDCOM.families) {
 			f.fewerThanFifteenSiblings();
+		}
+		// US06 - Divorce before death
+
+		// for (Individual fam: families){
+		// 	fam.isBirthBeforeDeath();
+		// }
+
+		// Birth Before Death
+		for (Individual i : individuals){
+			ArrayList<String> spouse_id = i.getSpouse();
+				i.isBirthBeforeDeath();
+				for(String j: spouse_id){
+					i.isDivorceBeforeDeath(i.getIndividual(j));
+					i.isTheMarriageBeforeDeath(i.getIndividual(j));
+					i.isTheMarriageBeforeDivorce(i.getIndividual(j));
+					i.uniqueNameAndBirthDate();
+
+			}
 		}
     }
 }

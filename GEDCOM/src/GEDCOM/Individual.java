@@ -129,8 +129,8 @@ public class Individual{
             return false;
         }
         Date marriageDate = ourFamily.getMarriageDate();
-
-        return marriageAndaDeathCompare(spouse, husbandID, marriageDate);
+        boolean ans = marriageAndaDeathCompare(spouse, husbandID, marriageDate);
+        return ans;
     }
 
     private boolean marriageAndaDeathCompare(Individual spouse, String husbandID, Date marriageDate) {
@@ -144,16 +144,30 @@ public class Individual{
             deathDateHusband = spouse.death_date;
 
         }
+        boolean ans ;
         if(deathDateHusband == null && deathDateWife == null){
             return true;
         }
         if(deathDateHusband == null) {
-            return marriageDate.before(deathDateWife);
+            ans = marriageDate.before(deathDateWife);
+            if(!ans){
+                System.out.println("[ERROR] isTheMarriageBeforeDeath: Marriage Does not occur before death for : " + this.id + " and " + spouse.id + " on marriage date " + marriageDate.toString()  + " (wife death) and on death date " + deathDateHusband );
+            }
+            return ans;
         }
         if(deathDateWife == null){
-            return marriageDate.before(deathDateHusband);
+            ans = marriageDate.before(deathDateHusband);
+            if(!ans){
+                System.out.println("[ERROR] isTheMarriageBeforeDeath: Marriage Does not occur before death for : " + this.id + " and " + spouse.id + " on marriage date " + marriageDate.toString()  + " (husband death) and on death date " + deathDateHusband );
+            }
+            return ans;
+
         }
-        return marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
+        ans = marriageDate.before(deathDateHusband) && marriageDate.before(deathDateWife);
+        if(!ans){
+            System.out.println("[ERROR] isTheMarriageBeforeDeath: Marriage Does not occur before death for : " + this.id + " and " + spouse.id + " on marriage date " + marriageDate.toString()  + " (both death) and on death date " + deathDateHusband );
+        }
+        return ans;
     }
 
     private Family getFamily(ArrayList<Family> families, String husbandID, String wifeID, Family ourFamily) {
@@ -179,7 +193,11 @@ public class Individual{
         Date divorceDate = ourFamily.getDivorceDate();
 
         if (divorceDate != null) {
-            return marriageDate.before(divorceDate);
+            boolean ans = marriageDate.before(divorceDate);
+            if(!ans) {
+                System.out.println("[ERROR] isTheMarriageBeforeDivorce: Marriage Does not occur before divorce for: " + this.id + " and " + spouse.id + " on maraiage date " + marriageDate.toString()  + " and on divorce date " + divorceDate.toString() );
+            }
+            return ans;
         } else {
             return true;
         }
@@ -208,7 +226,7 @@ public class Individual{
         return ourFamily;
     }
 
-    private Individual getIndividual(String id) {
+    public Individual getIndividual(String id) {
         ArrayList<Individual> individuals = GEDCOM.individuals;
         for (Individual i : individuals) {
             // is child and is a mother
@@ -225,7 +243,11 @@ public class Individual{
         if (this.birthday.equals(this.death_date)) {
             return true;
         }
-        return this.birthday.before(this.death_date);
+        boolean ans = this.birthday.before(this.death_date);
+        if(!ans){
+            System.out.println("[ERROR] isBirthBeforeDeath: Birth Does not occur before Death for: " + this.id + " on birthday date " + birthday.toString()  + " and on death date " + death_date.toString() );
+        }
+        return ans;
     }
 
     public boolean uniqueNameAndBirthDate() {
@@ -235,9 +257,13 @@ public class Individual{
         for (Individual id : individual) {
             String personName = id.name;
             Date personBirthDate = id.birthday;
-            if (id.getName().equals(personName) && id.getBirthday().equals(personBirthDate)) {
-                return false;
+            
+            boolean ans = id.getName().equals(personName);
+            boolean ans2 = id.getBirthday().equals(personBirthDate);
+            if (ans == true && ans2 == true) {
+                System.out.println("[ERROR] uniqueNameAndBirthDate: Individual " + this.id + " whose Name: " + personName + ", Birth Date: " + personBirthDate + " has the same name and birth date with Individual: " + this.id + " whose Name: " + personName + ", Birth Date: " + personBirthDate);
             }
+            return ans;
         }
         return true;
     }
@@ -260,8 +286,11 @@ public class Individual{
         if(divorceDate == null){
             return false;
         }
-
-        return marriageAndaDeathCompare(spouse, husbandID, divorceDate);
+        boolean ans = marriageAndaDeathCompare(spouse, husbandID, divorceDate);
+        if (!ans){
+            System.out.println("[ERROR] isDivorceBeforeDeath: Divorce Does not occur before Death for: " + this.id + " on divorce date " + divorceDate.toString()  + " and on death date " + death_date.toString() );
+        }
+        return ans;
     }
 
     public boolean isSpacedSiblings(){
