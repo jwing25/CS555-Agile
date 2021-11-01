@@ -417,6 +417,39 @@ public class Individual{
             }
         }
         return false;
-    }
+        }
+
+        public boolean marriageAfterFourteen(Individual spouse){
+            if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
+                return false;
+            }
+            
+            ArrayList<Family> families = GEDCOM.families;
+            String husbandID = this.gender.equals("Male")?id: spouse.id;
+            String wifeID = this.gender.equals("Female")?id: spouse.id;
+            Family ourFamily = null;
+            ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
+            if(ourFamily == null){
+                return false;
+            }
+            
+            Date husbandBirthday = this.gender.equals("Male")?birthday: spouse.birthday;
+            Date wifeBirthday = this.gender.equals("Female")?birthday: spouse.birthday;
+            Date marriageDate = ourFamily.getMarriageDate();
+
+            LocalDate husbandLocalBirthday = husbandBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate wifeLocalBirthday = wifeBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate marriageLocalDate = marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if(ChronoUnit.YEARS.between(wifeLocalBirthday, marriageLocalDate) < 14 || ChronoUnit.YEARS.between(husbandLocalBirthday, marriageLocalDate) < 14 ){
+                return false;
+            }
+            return true;
+    
+            }
+     
+
+    
+         
+
 }
 
