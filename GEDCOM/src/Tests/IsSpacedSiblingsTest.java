@@ -35,11 +35,11 @@ public class IsSpacedSiblingsTest {
             spouse2.add("husband1");
 
 
-            Dad = new Individual("husband1","husband1","Male",
+            Dad = new Individual("husband1","husband1","M",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1923" ),
                     98 ,true,null, children, spouse1);
 
-            Mom = new Individual("wife1","wife1","Female",
+            Mom = new Individual("wife1","wife1","F",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1953" ),
                     74 ,true,null, children, spouse2);
             GEDCOM.families.add(new Family("1",

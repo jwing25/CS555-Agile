@@ -398,6 +398,15 @@ public class GEDCOM {
 		System.out.println("");
     }
 
+	public static Family getFamily(String id) {
+		for (Family f : families) {
+			if (f.getId().equals(id)) {
+				return f;
+			}
+		}
+		throw new IllegalArgumentException("Family with id '" + id + "' not found.");
+	}
+
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
 		// Ask for user input
@@ -437,6 +446,11 @@ public class GEDCOM {
 
 		// US22 - Unique IDs
 		checkUniqueIds();
+
+		// US11 - No bigamy
+		for (Individual i : GEDCOM.individuals) {
+			i.checkBigamy();
+		}
 
 		// US15 - Fewer than 15 Siblings
 		for (Family f : GEDCOM.families) {
