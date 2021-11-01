@@ -1,4 +1,6 @@
 package GEDCOM;
+
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -123,8 +125,8 @@ public class Individual{
         }
 
         ArrayList<Family> families = GEDCOM.families;
-        String husbandID = this.gender.equals("Male")?id: spouse.id;
-        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        String husbandID = this.gender.equals("Male") || this.gender.equals("M") ?id: spouse.id;
+        String wifeID = this.gender.equals("Female") || this.gender.equals("F") ?id: spouse.id;
         Family ourFamily = null;
         ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
         if(ourFamily == null){
@@ -207,8 +209,8 @@ public class Individual{
 
     private Family getFamily(Individual spouse) {
         ArrayList<Family> families = GEDCOM.families;
-        String husbandID = this.gender.equals("Male") ? id : spouse.id;
-        String wifeID = this.gender.equals("Female") ? id : spouse.id;
+        String husbandID = this.gender.equals("Male") || this.gender.equals("M") ? id : spouse.id;
+        String wifeID = this.gender.equals("Female") || this.gender.equals("F") ? id : spouse.id;
         Family ourFamily = null;
         ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
         return ourFamily;
@@ -276,8 +278,8 @@ public class Individual{
         }
     
         ArrayList<Family> families = GEDCOM.families;
-        String husbandID = this.gender.equals("Male")?id: spouse.id;
-        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        String husbandID = this.gender.equals("Male") || this.gender.equals("M") ? id: spouse.id;
+        String wifeID = this.gender.equals("Female") || this.gender.equals("F")  ? id: spouse.id;
         Family ourFamily = null;
         ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
         if(ourFamily == null){
@@ -313,6 +315,52 @@ public class Individual{
         return true;
     }
 
+    /**
+     * US11: No bigamy
+     * @return True if the individual has less than one spouse at a time, false otherwise
+     */
+    public Boolean checkBigamy() {
+        if (this.spouse == null || this.spouse.size() <= 1) {
+            return true;
+        }
+        // If an individual has had more than 1 spouse, check if they were married at the same time
+        // Add all marriages to a list of pairs
+        ArrayList<Marriage> marriages = new ArrayList<Marriage>();
+        Family f;
+        Individual s;
+        for (int i = 0; i < spouse.size(); i++) {
+        	try {
+        		f = GEDCOM.getFamily(spouse.get(i));
+        		if (this.gender.equals("Male") || this.gender.equals("M")) {
+        			s = getIndividual(f.getWifeId());
+        		} else {
+        			s = getIndividual(f.getHusbandId());
+        		}
+        		if (f.getDivorceDate() != null) { // Check if divorced 
+        			marriages.add(new Marriage("M" + i, f.getMarriageDate(), f.getDivorceDate()));
+        		} else if (!s.getAlive()) { // Check if widow/widower
+        			marriages.add(new Marriage("M" + i, f.getMarriageDate(), s.getDeath()));
+        		} else {
+        			marriages.add(new Marriage("M" + i, f.getMarriageDate(), null));
+        		}
+        	} catch (Exception e) {
+        		System.out.println("ERROR: [US11] INDIVIDUAL " + this.getId() + " - is a spouse in an invalid family " + spouse.get(i) + ".");
+        	}
+        }
+
+        // Check if any marriage overlaps
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        for (Marriage m1 : marriages) {
+            for (Marriage m2 : marriages) {
+                if (m1.getId() != m2.getId() && m1.during(m2.getStart())) {
+                    System.out.println("ERROR: Individual " + this.getId() + " - Bigamy occurs with marriage on date " + formatter.format(m2.getStart()) + ".");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean isSpacedSiblings(){
         Family family = getBioMotherFamily();
         ArrayList<Date> listOfBirthDays = new ArrayList<>();
@@ -332,7 +380,6 @@ public class Individual{
                 }
             }
         }
-
         return true;
     }
 
@@ -367,15 +414,9 @@ public class Individual{
             LocalDate child_birthday_local = child_birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             if(child_birthday.before(marriageDate) || (divorceDate != null && child_birthday_local.isAfter(divorceDateLocal9months))){
                 return true;
-                }
             }
-            return false;
-
         }
-     
-
-    
-         
-
+        return false;
+    }
 }
 

@@ -30,21 +30,21 @@ public class DatesTest {
             spouse2.add("spouse3");
             spouse2.add("spouse4");
 
-            husband1 = new Individual("husband1","husband1","Male",
+            husband1 = new Individual("husband1","husband1","M",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1923" ),
                     98 ,true,null,null, spouse1);
 
-            husband2 = new Individual("123", "Justin", "Male",
+            husband2 = new Individual("123", "Justin", "M",
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1950"),
                     71, false,
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/2021"),
                     null, spouse1);
 
-            wife1 = new Individual("wife1","wife1","Female",
+            wife1 = new Individual("wife1","wife1","F",
                     new SimpleDateFormat("MM/dd/yyyy").parse( "8/16/1953" ),
                     74 ,true,null,null, spouse1);
 
-            wife2 = new Individual("456", "Queen Elizabeth", "Female",
+            wife2 = new Individual("456", "Queen Elizabeth", "F",
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1900"),
                     80, false,
                     new SimpleDateFormat("dd/MM/yyyy").parse("13/03/1980"),
