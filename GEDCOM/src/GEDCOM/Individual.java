@@ -1,6 +1,9 @@
 package GEDCOM;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -294,7 +297,7 @@ public class Individual{
         return ans;
     }
 
-    public boolean isSpacedSiblings(){
+    public boolean isMultipleBirth(){
         Family family = getBioMotherFamily();
         HashMap<Date,ArrayList<String>> mapOfBDayAndName = new HashMap<>();
         for (String id : family.getChildren()) {
@@ -358,5 +361,62 @@ public class Individual{
         return true;
     }
 
+    public boolean isSpacedSiblings(){
+        Family family = getBioMotherFamily();
+        ArrayList<Date> listOfBirthDays = new ArrayList<>();
+        for (String id : family.getChildren()) {
+            Individual sibling = getIndividual(id);
+            listOfBirthDays.add(sibling.getBirthday());
+        }
+        for (int i = 0; i < listOfBirthDays.size(); i++) {
+            LocalDate date1 = Dates.convertToLocalDateViaInstant(listOfBirthDays.get(i));
+            for (int j = i+1; j < listOfBirthDays.size(); j++) {
+                LocalDate date2 = Dates.convertToLocalDateViaInstant(listOfBirthDays.get(j));
+                long months = ChronoUnit.MONTHS.between(date1, date2);
+                long days = ChronoUnit.DAYS.between(date1, date2);
+
+                if(Math.abs(months) < 8 && Math.abs(days) > 2){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isBirthBeforeMarriage(Individual spouse){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
+            return false;
+        }
+
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male")?id: spouse.id;
+        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        Family ourFamily = null;
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
+        if(ourFamily == null){
+            return false;
+        }
+        Date marriageDate = ourFamily.getMarriageDate();
+        Date divorceDate = null;
+        LocalDate divorceDateLocal = null;
+        LocalDate divorceDateLocal9months = null;
+
+        if(ourFamily.getDivorceDate() != null){
+            divorceDate = ourFamily.getDivorceDate();
+            divorceDateLocal = divorceDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            divorceDateLocal9months = divorceDateLocal.plusMonths(9);
+        }
+
+        ArrayList<String> children = ourFamily.getChildren();
+        for (String c: children){
+            Individual child = getIndividual(c);
+            Date child_birthday = child.getBirthday();
+            LocalDate child_birthday_local = child_birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if(child_birthday.before(marriageDate) || (divorceDate != null && child_birthday_local.isAfter(divorceDateLocal9months))){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

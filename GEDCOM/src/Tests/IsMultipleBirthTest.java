@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IsSpacedSiblingsTest {
+public class IsMultipleBirthTest {
     public static Individual Mom;
     public static Individual Dad;
     public static Individual Sibling1;
@@ -76,7 +76,7 @@ public class IsSpacedSiblingsTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        assertFalse(Sibling1.isSpacedSiblings());
+        assertFalse(Sibling1.isMultipleBirth());
         GEDCOM.families.get(0).getChildren().clear();
         GEDCOM.individuals.clear();
     }
@@ -106,7 +106,7 @@ public class IsSpacedSiblingsTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        assertTrue(Sibling1.isSpacedSiblings());
+        assertTrue(Sibling1.isMultipleBirth());
         GEDCOM.families.get(0).getChildren().clear();
         GEDCOM.individuals.clear();
 
@@ -125,7 +125,7 @@ public class IsSpacedSiblingsTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        assertTrue(Sibling1.isSpacedSiblings());
+        assertTrue(Sibling1.isMultipleBirth());
         GEDCOM.families.get(0).getChildren().clear();
         GEDCOM.individuals.clear();
     }
@@ -155,7 +155,7 @@ public class IsSpacedSiblingsTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        assertTrue(Sibling1.isSpacedSiblings());
+        assertTrue(Sibling1.isMultipleBirth());
         GEDCOM.families.get(0).getChildren().clear();
         GEDCOM.individuals.clear();
 

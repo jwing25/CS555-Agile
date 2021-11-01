@@ -2,6 +2,10 @@ package GEDCOM;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -79,4 +83,17 @@ public class Dates {
         }
 		return valid;
 	}
+
+
+	public static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+		return dateToConvert.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDate();
+	}
+	public static Date convertToDateViaInstant(LocalDate dateToConvert) {
+		return java.util.Date.from(dateToConvert.atStartOfDay()
+				.atZone(ZoneId.systemDefault())
+				.toInstant());
+	}
+
 }
