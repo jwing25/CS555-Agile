@@ -1,6 +1,6 @@
 package GEDCOM;
-
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -335,6 +335,47 @@ public class Individual{
 
         return true;
     }
+
+    public boolean isBirthBeforeMarriage(Individual spouse){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
+            return false;
+        }
+
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male")?id: spouse.id;
+        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        Family ourFamily = null;
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
+        if(ourFamily == null){
+            return false;
+        }
+        Date marriageDate = ourFamily.getMarriageDate();
+        Date divorceDate = null;
+        LocalDate divorceDateLocal = null;
+        LocalDate divorceDateLocal9months = null;
+
+        if(ourFamily.getDivorceDate() != null){
+            divorceDate = ourFamily.getDivorceDate();
+            divorceDateLocal = divorceDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            divorceDateLocal9months = divorceDateLocal.plusMonths(9);
+        }
+
+        ArrayList<String> children = ourFamily.getChildren();
+        for (String c: children){
+            Individual child = getIndividual(c);
+            Date child_birthday = child.getBirthday();
+            LocalDate child_birthday_local = child_birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if(child_birthday.before(marriageDate) || (divorceDate != null && child_birthday_local.isAfter(divorceDateLocal9months))){
+                return true;
+                }
+            }
+            return false;
+
+        }
+     
+
+    
+         
 
 }
 
