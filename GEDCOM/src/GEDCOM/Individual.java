@@ -413,6 +413,7 @@ public class Individual{
             Date child_birthday = child.getBirthday();
             LocalDate child_birthday_local = child_birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             if(child_birthday.before(marriageDate) || (divorceDate != null && child_birthday_local.isAfter(divorceDateLocal9months))){
+                System.out.println("ERROR: Child " + child.id + " was born out of wedlock");
                 return true;
             }
         }
@@ -441,6 +442,7 @@ public class Individual{
             LocalDate wifeLocalBirthday = wifeBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalDate marriageLocalDate = marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             if(ChronoUnit.YEARS.between(wifeLocalBirthday, marriageLocalDate) < 14 || ChronoUnit.YEARS.between(husbandLocalBirthday, marriageLocalDate) < 14 ){
+                System.out.println("ERROR: Individual " + this.getId() + "and " + spouse.id + " were married before one or both of them were 14.");
                 return false;
             }
             return true;
