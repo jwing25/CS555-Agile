@@ -456,6 +456,7 @@ public class GEDCOM {
 					i.isDivorceBeforeDeath(i.getIndividual(j));
 					i.isTheMarriageBeforeDeath(i.getIndividual(j));
 					i.isTheMarriageBeforeDivorce(i.getIndividual(j));
+					i.isBirthBeforeMarriage(i.getIndividual(j));
 					i.uniqueNameAndBirthDate();
 
 			}
