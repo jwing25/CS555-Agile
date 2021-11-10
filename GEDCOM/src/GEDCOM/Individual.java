@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+//import java.util.Calendar;
 import java.util.Map;
 
 public class Individual{
@@ -315,6 +316,7 @@ public class Individual{
         return true;
     }
 
+<<<<<<< Updated upstream
     /**
      * US11: No bigamy
      * @return True if the individual has less than one spouse at a time, false otherwise
@@ -357,10 +359,38 @@ public class Individual{
                     return false;
                 }
             }
+=======
+    public boolean parentsTooOld(ArrayList<Individual> individuals){
+        //ArrayList<Individual> Individual = GEDCOM.individuals;
+        ArrayList<Family> Family = GEDCOM.families;
+
+        for(Individual i : individuals){
+    
+            Individual husband;
+            Individual wife;
+            
+            for(Family f: Family){
+                String husbandID = f.getHusbandId();
+                husband = new Individual(husbandID);
+                String wifeID = f.getWifeId();
+                wife = new Individual(wifeID);
+
+                    if((((Individual)husband).age - i.getAge()) >= 80){
+                        //return false
+                        return false;
+                    }
+                    if((wife.getAge() - i.getAge()) >= 60){
+                        //return false
+                        return false;
+                    }
+            }
+            return true;
+>>>>>>> Stashed changes
         }
         return true;
     }
 
+<<<<<<< Updated upstream
     public boolean isSpacedSiblings(){
         Family family = getBioMotherFamily();
         ArrayList<Date> listOfBirthDays = new ArrayList<>();
@@ -452,6 +482,28 @@ public class Individual{
 
     
          
+=======
+      private ArrayList<String> result = new ArrayList<String>();
+  
+      public ArrayList<String> getResult() {
+          return result;
+      }
+
+      public boolean notTooOld(){
+        ArrayList<Individual> individual = GEDCOM.individuals;
+            for(Individual i : individual){
+                if(i.getAge() >= 150){
+                    String tmp = "[Error]: with a birth date:" + i.getBirthday() + " , "
+							+ i.getName() + " (" + i.getId() + "), "
+							+ "lived longer than 150 years old" + ",as his/her death date is " + ""
+							+ i.getDeath();
+
+                    return result.add(tmp);
+                }
+            }
+            return true;
+        }
+>>>>>>> Stashed changes
 
 }
 
