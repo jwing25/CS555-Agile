@@ -476,5 +476,10 @@ public class GEDCOM {
 
 			}
 		}
+
+		// US02 - Birth Before Marriage
+		for (Individual i : individuals){
+			i.birthBeforeMarriage();
+		}
     }
 }
