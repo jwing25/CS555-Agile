@@ -112,12 +112,19 @@ public class Individual{
         this.childof.add(famId);
     }
 
-    public void setSpouse(ArrayList<String> spouse) {
-        this.spouse = spouse;
+    public void setSpouse(ArrayList<String> spouses) {
+        for (String spouseID : spouses) {
+            if(this.isSibling(getIndividual(spouseID))){
+                return;
+            }
+        }
+        this.spouse = spouses;
     }
 
     public void addSpouse(String spouseId) {
-        this.spouse.add(spouseId);
+        if(!isSibling(getIndividual(spouseId))) {
+            this.spouse.add(spouseId);
+        }
     }
 
     public boolean isTheMarriageBeforeDeath(Individual spouse){
@@ -479,6 +486,17 @@ public class Individual{
         return true;
 
         }
+
+    public boolean isSibling(Individual otherPerson){
+        ArrayList<Family> families = GEDCOM.families;
+        for (int i = 0; i < families.size(); i++) {
+            if(families.get(i).getChildren().contains(name) &&
+                    families.get(i).getChildren().contains(otherPerson.name)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private ArrayList<String> result = new ArrayList<String>();
 
