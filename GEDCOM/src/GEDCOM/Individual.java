@@ -241,6 +241,7 @@ public class Individual{
         }
         return null;
     }
+
     public boolean isBirthBeforeDeath() {
         if (this.death_date == null) {
             return true;
@@ -450,54 +451,62 @@ public class Individual{
         return false;
         }
 
-        public boolean marriageAfterFourteen(Individual spouse){
-            if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
-                return false;
-            }
-            
-            ArrayList<Family> families = GEDCOM.families;
-            String husbandID = this.gender.equals("Male")?id: spouse.id;
-            String wifeID = this.gender.equals("Female")?id: spouse.id;
-            Family ourFamily = null;
-            ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
-            if(ourFamily == null){
-                return false;
-            }
-            
-            Date husbandBirthday = this.gender.equals("Male")?birthday: spouse.birthday;
-            Date wifeBirthday = this.gender.equals("Female")?birthday: spouse.birthday;
-            Date marriageDate = ourFamily.getMarriageDate();
+    public boolean marriageAfterFourteen(Individual spouse){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
+            return false;
+        }
 
-            LocalDate husbandLocalBirthday = husbandBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate wifeLocalBirthday = wifeBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate marriageLocalDate = marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if(ChronoUnit.YEARS.between(wifeLocalBirthday, marriageLocalDate) < 14 || ChronoUnit.YEARS.between(husbandLocalBirthday, marriageLocalDate) < 14 ){
-                System.out.println("ERROR: Individual " + this.getId() + "and " + spouse.id + " were married before one or both of them were 14.");
-                return false;
-            }
-            return true;
-    
-            }
-            
-            private ArrayList<String> result = new ArrayList<String>();
-  
-            public ArrayList<String> getResult() {
-                return result;
-            }
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male")?id: spouse.id;
+        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        Family ourFamily = null;
+        ourFamily = getFamily(families, husbandID, wifeID, ourFamily);
+        if(ourFamily == null){
+            return false;
+        }
 
-            public boolean notTooOld(){
-              ArrayList<Individual> individual = GEDCOM.individuals;
-                  for(Individual i : individual){
-                      if(i.getAge() >= 150){
-                          String tmp = "[Error]: with a birth date:" + i.getBirthday() + " , "
-                                  + i.getName() + " (" + i.getId() + "), "
-                                  + "lived longer than 150 years old" + ",as his/her death date is " + ""
-                                  + i.getDeath();
-      
-                          return result.add(tmp);
-                      }
-                  }
-                  return true;
-              }
+        Date husbandBirthday = this.gender.equals("Male")?birthday: spouse.birthday;
+        Date wifeBirthday = this.gender.equals("Female")?birthday: spouse.birthday;
+        Date marriageDate = ourFamily.getMarriageDate();
+
+        LocalDate husbandLocalBirthday = husbandBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate wifeLocalBirthday = wifeBirthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate marriageLocalDate = marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if(ChronoUnit.YEARS.between(wifeLocalBirthday, marriageLocalDate) < 14 || ChronoUnit.YEARS.between(husbandLocalBirthday, marriageLocalDate) < 14 ){
+            System.out.println("ERROR: Individual " + this.getId() + "and " + spouse.id + " were married before one or both of them were 14.");
+            return false;
+        }
+        return true;
+
+        }
+
+    private ArrayList<String> result = new ArrayList<String>();
+
+    public ArrayList<String> getResult() {
+        return result;
     }
+
+    public boolean notTooOld(){
+      ArrayList<Individual> individual = GEDCOM.individuals;
+          for(Individual i : individual){
+              if(i.getAge() >= 150){
+                  String tmp = "[Error]: with a birth date:" + i.getBirthday() + " , "
+                          + i.getName() + " (" + i.getId() + "), "
+                          + "lived longer than 150 years old" + ",as his/her death date is " + ""
+                          + i.getDeath();
+
+                  return result.add(tmp);
+              }
+          }
+          return true;
+      }
+
+    @Override
+    public String toString() {
+        return "Individual:" +
+                "name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", age=" + age ;
+    }
+}
 
