@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BirthBeforeMarriage {
+public class BirthBeforeMarriageOfParents {
     public static Individual Mom;
     public static Individual Dad;
     public static Individual Sibling1;

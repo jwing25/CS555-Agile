@@ -519,6 +519,26 @@ public class Individual{
           return true;
       }
 
+    public boolean birthBeforeMarriage() {
+        // Check if birth occurs before each marriage for the individual
+        Family f;
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        for (int i = 0; i < spouse.size(); i++) {
+        	try {
+        		f = GEDCOM.getFamily(spouse.get(i));
+        		if (!birthday.before(f.getMarriageDate())) {
+                    System.out.println("ERROR: [US02] INDIVIDUAL " + this.getId() + " - Birth on " + formatter.format(birthday) + " occurs before marriage on " + formatter.format(f.getMarriageDate()) + " in Family " + f.getId() + ".");
+                    return false;
+                }
+        	} catch (Exception e) {
+                // TODO: Double check this
+        		System.out.println("ERROR: [US02] INDIVIDUAL " + this.getId() + " - is a spouse in an invalid family " + spouse.get(i) + ".");
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return "Individual:" +
