@@ -407,6 +407,14 @@ public class GEDCOM {
 		throw new IllegalArgumentException("Family with id '" + id + "' not found.");
 	}
 
+	public static void listLivingMarried() {
+		for (Individual i : individuals) {
+			if (i.getDeath() == null) {
+				// Check if not divorced or widowed
+			}
+		}
+	}
+
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
 		// Ask for user input
