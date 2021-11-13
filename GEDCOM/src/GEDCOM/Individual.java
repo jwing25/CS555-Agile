@@ -215,7 +215,7 @@ public class Individual{
         }
     }
 
-    private Family getFamily(Individual spouse) {
+    public Family getFamily(Individual spouse) {
         ArrayList<Family> families = GEDCOM.families;
         String husbandID = this.gender.equals("Male") || this.gender.equals("M") ? id : spouse.id;
         String wifeID = this.gender.equals("Female") || this.gender.equals("F") ? id : spouse.id;
@@ -339,7 +339,7 @@ public class Individual{
         Individual s;
         for (int i = 0; i < spouse.size(); i++) {
         	try {
-        		f = GEDCOM.getFamily(spouse.get(i));
+        		f = getFamily(getIndividual(spouse.get(i)));
         		if (this.gender.equals("Male") || this.gender.equals("M")) {
         			s = getIndividual(f.getWifeId());
         		} else {
@@ -538,6 +538,7 @@ public class Individual{
         }
         return true;
     }
+
 
     @Override
     public String toString() {
