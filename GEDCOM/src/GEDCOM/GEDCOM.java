@@ -406,6 +406,14 @@ public class GEDCOM {
 		}
 		throw new IllegalArgumentException("Family with id '" + id + "' not found.");
 	}
+	public static void printDeceased(){
+		for (Individual i : individuals) {
+			if (!i.getAlive()) {
+				System.out.println("INDIVIDUAL " + i.getId() + " is deceased");
+			} 
+		}
+
+	}
 
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
@@ -461,6 +469,9 @@ public class GEDCOM {
 		// for (Individual fam: families){
 		// 	fam.isBirthBeforeDeath();
 		// }
+		// US29 - Print Deceased
+		printDeceased();
+	
 
 		// Birth Before Death
 		for (Individual i : individuals){
@@ -473,7 +484,6 @@ public class GEDCOM {
 					i.marriageAfterFourteen(i.getIndividual(j));
 					i.isBirthBeforeMarriage(i.getIndividual(j));
 					i.uniqueNameAndBirthDate();
-
 			}
 		}
 
@@ -481,5 +491,7 @@ public class GEDCOM {
 		for (Individual i : individuals){
 			i.birthBeforeMarriage();
 		}
+
+
     }
 }
