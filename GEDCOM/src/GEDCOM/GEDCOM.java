@@ -420,7 +420,7 @@ public class GEDCOM {
     }
 
 	public static boolean listLivingMarried() {
-		System.out.println("Living and Married Individuals:");
+		System.out.println("\nLiving and Married Individuals:");
 		System.out.println("===============================");
 		try {
 
