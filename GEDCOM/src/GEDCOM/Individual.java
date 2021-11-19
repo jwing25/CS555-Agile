@@ -215,7 +215,7 @@ public class Individual{
         }
     }
 
-    public Family getFamily(Individual spouse) {
+    private Family getFamily(Individual spouse) {
         ArrayList<Family> families = GEDCOM.families;
         String husbandID = this.gender.equals("Male") || this.gender.equals("M") ? id : spouse.id;
         String wifeID = this.gender.equals("Female") || this.gender.equals("F") ? id : spouse.id;
@@ -339,7 +339,7 @@ public class Individual{
         Individual s;
         for (int i = 0; i < spouse.size(); i++) {
         	try {
-        		f = getFamily(getIndividual(spouse.get(i)));
+        		f = GEDCOM.getFamily(spouse.get(i));
         		if (this.gender.equals("Male") || this.gender.equals("M")) {
         			s = getIndividual(f.getWifeId());
         		} else {
@@ -539,6 +539,43 @@ public class Individual{
         return true;
     }
 
+    public boolean isUncleOrAunt(Individual spouse){
+        if(spouse == null || spouse.spouse == null || spouse.spouse.size()== 0){
+            return false;
+        }
+
+        ArrayList<Family> families = GEDCOM.families;
+        String husbandID = this.gender.equals("Male")?id: spouse.id;
+        String wifeID = this.gender.equals("Female")?id: spouse.id;
+        String husbandMom = null;
+        String husbandDad = null;
+        String wifeMom = null;
+        String wifeDad = null;
+
+        for(Family f: families){
+            if(f.getChildren().contains(husbandID)){
+                husbandMom = f.getWifeId();
+                husbandDad = f.getHusbandId();
+            }
+            if(f.getChildren().contains(wifeID)){
+                wifeMom = f.getWifeId();
+                wifeDad = f.getHusbandId();
+            }
+        }
+
+        for(Family f: families){
+            if((f.getChildren().contains(husbandMom) && f.getChildren().contains(wifeID)) ||(f.getChildren().contains(husbandDad) && f.getChildren().contains(wifeID)) ){
+                System.out.println("ERROR: [US20] Individual " + wifeID + " is the aunt of " + husbandID + ".");
+                return true;
+            }
+            if((f.getChildren().contains(wifeMom) && f.getChildren().contains(husbandID)) ||(f.getChildren().contains(wifeDad) && f.getChildren().contains(husbandID)) ){
+                System.out.println("ERROR: [US20] Individual " + husbandID + " is the uncle of " + wifeID + ".");
+                return true;
+            }
+        }
+
+        return false;
+        }
 
     @Override
     public String toString() {
