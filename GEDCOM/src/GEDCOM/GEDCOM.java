@@ -406,12 +406,15 @@ public class GEDCOM {
 		}
 		throw new IllegalArgumentException("Family with id '" + id + "' not found.");
 	}
-	public static void printDeceased(){
+	public static ArrayList<String> printDeceased(){
+		ArrayList<String> deceasedList = new ArrayList<String>();
 		for (Individual i : individuals) {
 			if (!i.getAlive()) {
+				deceasedList.add(i.getId());
 				System.out.println("INDIVIDUAL " + i.getId() + " is deceased");
 			} 
 		}
+		return deceasedList;
 
 	}
 
