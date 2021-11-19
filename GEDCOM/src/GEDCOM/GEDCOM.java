@@ -404,7 +404,8 @@ public class GEDCOM {
 				return f;
 			}
 		}
-		throw new IllegalArgumentException("Family with id '" + id + "' not found.");
+		// throw new IllegalArgumentException("Family with id '" + id + "' not found.");
+		return null;
 	}
 
     public static Individual getIndividual(String id) {
@@ -414,49 +415,61 @@ public class GEDCOM {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Individual with id '" + id + "' not found.");
+        // throw new IllegalArgumentException("Individual with id '" + id + "' not found.");
+		return null;
     }
 
-	public static void listLivingMarried() {
+	public static boolean listLivingMarried() {
 		System.out.println("Living and Married Individuals:");
 		System.out.println("===============================");
-		if (GEDCOM.individuals.isEmpty()) {
-			System.out.println("No individuals found");
-		} else {
-			// Add all marriages to a list of pairs to check if individual is currently married
-			ArrayList<Marriage> marriages = new ArrayList<Marriage>();
-			Family f;
-			Individual s;
-			ArrayList<String> spouses;
-			for (Individual indi : GEDCOM.individuals) {
-				spouses = indi.getSpouse();
-				if (indi.getDeath() == null && !spouses.isEmpty()) {
-					// Check if not divorced or widowed
-					for (int i = 0; i < spouses.size(); i++) {
-						f = getFamily(spouses.get(i));
-						if (indi.getGender().equals("Male") || indi.getGender().equals("M")) {
-							s = getIndividual(f.getWifeId());
-						} else {
-							s = getIndividual(f.getHusbandId());
-						}
-						if (f.getDivorceDate() != null) { // Check if divorced 
-							marriages.add(new Marriage("M" + i, f.getMarriageDate(), f.getDivorceDate()));
-						} else if (!s.getAlive()) { // Check if widow/widower
-							marriages.add(new Marriage("M" + i, f.getMarriageDate(), s.getDeath()));
-						} else {
-							marriages.add(new Marriage("M" + i, f.getMarriageDate(), null));
+		try {
+
+			if (GEDCOM.individuals.isEmpty()) {
+				System.out.println("No individuals found");
+			} else {
+				// Add all marriages to a list of pairs to check if individual is currently married
+				ArrayList<Marriage> marriages = new ArrayList<Marriage>();
+				Family f;
+				Individual s;
+				ArrayList<String> spouses;
+				for (Individual indi : GEDCOM.individuals) {
+					spouses = indi.getSpouse();
+					if (indi.getDeath() == null && !spouses.isEmpty()) {
+						// Check if not divorced or widowed
+						for (int i = 0; i < spouses.size(); i++) {
+							f = getFamily(spouses.get(i));
+							if (f == null) {
+								System.out.println("[ERROR] Family " + spouses.get(i) + " does not exist.");
+								continue;
+							}
+							if (indi.getGender().equals("Male") || indi.getGender().equals("M")) {
+								s = getIndividual(f.getWifeId());
+							} else {
+								s = getIndividual(f.getHusbandId());
+							}
+							if (f.getDivorceDate() != null) { // Check if divorced 
+								marriages.add(new Marriage("M" + i, f.getMarriageDate(), f.getDivorceDate()));
+							} else if (!s.getAlive()) { // Check if widow/widower
+								marriages.add(new Marriage("M" + i, f.getMarriageDate(), s.getDeath()));
+							} else {
+								marriages.add(new Marriage("M" + i, f.getMarriageDate(), null));
+							}
 						}
 					}
+					Date currentdate = new Date();
+					for (Marriage m : marriages) {
+						if (m.during(currentdate)) {
+							System.out.println("ID: " + indi.getId() + ", Name: " + indi.getName());
+						}
+					}
+					marriages.clear();
 				}
-                Date currentdate = new Date();
-                for (Marriage m : marriages) {
-                    if (m.during(currentdate)) {
-                        System.out.println("ID: " + indi.getId() + ", Name: " + indi.getName());
-                    }
-                }
-                marriages.clear();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
     public static void main(String[] args) throws ParseException {
