@@ -487,6 +487,8 @@ public class GEDCOM {
 					i.marriageAfterFourteen(i.getIndividual(j));
 					i.isBirthBeforeMarriage(i.getIndividual(j));
 					i.uniqueNameAndBirthDate();
+					i.isUncleOrAunt(i.getIndividual(j));
+
 			}
 		}
 
