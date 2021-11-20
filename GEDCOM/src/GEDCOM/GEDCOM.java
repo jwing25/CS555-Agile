@@ -398,6 +398,17 @@ public class GEDCOM {
 		System.out.println("");
     }
 
+	public static ArrayList<String> printDeceased(){
+		ArrayList<String> deceasedList = new ArrayList<String>();
+		for (Individual i : individuals) {
+			if (!i.getAlive()) {
+				deceasedList.add(i.getId());
+				System.out.println("INDIVIDUAL " + i.getId() + " is deceased");
+			} 
+		}
+		return deceasedList;
+	}
+
 	public static Family getFamily(String id) {
 		for (Family f : families) {
 			if (f.getId().equals(id)) {
@@ -547,6 +558,9 @@ public class GEDCOM {
 		for (Individual i : individuals){
 			i.birthBeforeMarriage();
 		}
+
+		// US29 - Print Deceased
+		printDeceased();
 
 		// US30 - List living married
 		listLivingMarried();
