@@ -1,14 +1,11 @@
 package GEDCOM;
 
 import java.io.*;
-import java.util.Date;
+import java.time.Instant;
+import java.util.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Author: Francis Borja
@@ -482,6 +479,28 @@ public class GEDCOM {
 		}
 		return true;
 	}
+
+	public static List<Individual> listRecentDeaths(){
+		ArrayList<Individual> deadPeople = new ArrayList<Individual>();
+		for (Individual i : individuals) {
+			if(!i.getAlive()){
+
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+				Date firstDate = null;
+				firstDate = Date.from(Instant.now());
+				Date secondDate = i.getDeath();
+
+				long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+				long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+				if(diff < 31){
+					deadPeople.add(i);
+				}
+			}
+		}
+		return deadPeople;
+	}
+
 
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();

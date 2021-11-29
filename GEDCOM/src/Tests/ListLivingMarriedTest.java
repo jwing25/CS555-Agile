@@ -1,6 +1,5 @@
 package Tests;
 
-import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,8 +71,4 @@ public class ListLivingMarriedTest {
         }
     }
 
-    @Test
-    void test1() {
-        assertTrue(GEDCOM.listLivingMarried());
-    }
 }
