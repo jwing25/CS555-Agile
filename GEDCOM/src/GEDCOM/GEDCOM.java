@@ -501,6 +501,26 @@ public class GEDCOM {
 		return deadPeople;
 	}
 
+	public static List<Individual> listUpComingBday(){
+		ArrayList<Individual> bdayPeople = new ArrayList<Individual>();
+		for (Individual i : individuals) {
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+			Date firstDate = null;
+			firstDate = Date.from(Instant.now());
+			Date secondDate = i.getBirthday();
+			long diffInMillies = firstDate.getTime() - secondDate.getTime();
+			long difference_In_Days
+					= (diffInMillies
+					/ (1000 * 60 * 60 * 24))
+					% 365;
+
+			long days = difference_In_Days%365;
+			if(days < 31){
+				bdayPeople.add(i);
+			}
+		}
+		return bdayPeople;
+	}
 
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
