@@ -84,6 +84,18 @@ public class Dates {
 		return valid;
 	}
 
+    public Boolean checkIllegitimateDates(File file) {
+        Boolean valid = true;
+        
+        ArrayList<String> lines = GEDCOM.readFile(file);
+        Date date;
+        for (String line : lines) {
+            
+        }
+
+        return valid;
+    }
+
 
 	public static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
 		return dateToConvert.toInstant()
