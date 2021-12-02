@@ -521,6 +521,18 @@ public class GEDCOM {
 		}
 		return bdayPeople;
 	}
+	public static ArrayList<String> getSinglePeople(){
+		ArrayList<String> singleList = new ArrayList<String>();
+		for (Individual i : individuals) {
+			if (i.getSpouse() == null && i.getAge() > 30 && i.getAlive()) {
+				singleList.add(i.getId());
+				System.out.println("INDIVIDUAL " + i.getId() + " is single all their life and over 30");
+			} 
+		}
+		return singleList;
+	}
+
+
 
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
