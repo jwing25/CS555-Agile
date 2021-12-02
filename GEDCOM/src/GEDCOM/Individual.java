@@ -531,7 +531,6 @@ public class Individual{
                     return false;
                 }
         	} catch (Exception e) {
-                // TODO: Double check this
         		System.out.println("ERROR: [US02] INDIVIDUAL " + this.getId() + " - is a spouse in an invalid family " + spouse.get(i) + ".");
                 return false;
             }
