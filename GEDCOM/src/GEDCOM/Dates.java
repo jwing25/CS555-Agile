@@ -1,6 +1,7 @@
 package GEDCOM;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -84,16 +85,30 @@ public class Dates {
 		return valid;
 	}
 
-    public Boolean checkIllegitimateDates(File file) {
+    public static Boolean checkIllegitimateDates(File file) {
         Boolean valid = true;
-        
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
         ArrayList<String> lines = GEDCOM.readFile(file);
         Date date;
         for (String line : lines) {
-            
+            date = getDate(line);
+            if (!validDate(formatter.format(date))) {
+                valid = false;
+                System.out.println("ERROR: [US42] INVALID DATE " + formatter.format(date) + ".");
+            }
         }
-
         return valid;
+    }
+
+    public static Boolean validDate(String date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
+        formatter.setLenient(false);
+        try {
+            formatter.parse(date);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 
 

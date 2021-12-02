@@ -1,8 +1,11 @@
 package Tests;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,7 +14,7 @@ import GEDCOM.Family;
 import GEDCOM.GEDCOM;
 import GEDCOM.Individual;
 
-public class ListLivingMarriedTest {
+public class UpcomingAnniversariesTest {
     public static Individual i1;
     public static Individual i2;
     public static Individual i3;
@@ -25,6 +28,42 @@ public class ListLivingMarriedTest {
 
     @BeforeAll
     public static void init() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
+        Date date = new Date();
+        Calendar c1 = Calendar.getInstance();
+        String currentdate = formatter.format(date);
+        
+        // Within 30 days
+        String within30 = "";
+        try {
+            c1.setTime(formatter.parse(currentdate));
+            c1.add(Calendar.DATE, 29);
+            Date resultdate = new Date(c1.getTimeInMillis());
+            within30 = formatter.format(resultdate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // After 30 days
+        String after30 = "";
+        try {
+            c1.setTime(formatter.parse(currentdate));
+            c1.add(Calendar.DATE, 31);
+            Date resultdate = new Date(c1.getTimeInMillis());
+            after30 = formatter.format(resultdate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // On 30 days
+        String on30 = "";
+        try {
+            c1.setTime(formatter.parse(currentdate));
+            c1.add(Calendar.DATE, 30);
+            Date resultdate = new Date(c1.getTimeInMillis());
+            on30 = formatter.format(resultdate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         try {
             ArrayList<String> spouse1 = new ArrayList<String>();
             spouse1.add("F1");
@@ -34,7 +73,8 @@ public class ListLivingMarriedTest {
                                 21, true, null, null, spouse1);          
             i2 = new Individual("I2", "individual2", "F", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JAN/2000"), 
                                 21, true, null, null, spouse2);
-            f1 = new Family("F1", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JUL/2020"), null, "I1", "INDI1", "I2", "INDI2", new ArrayList<String>());
+            // Within 30
+            f1 = new Family("F1", new SimpleDateFormat("dd/MMM/yyyy").parse(within30), null, "I1", "INDI1", "I2", "INDI2", new ArrayList<String>());
 
             ArrayList<String> spouse3 = new ArrayList<String>();
             spouse3.add("F2");
@@ -44,7 +84,8 @@ public class ListLivingMarriedTest {
                                 21, true, null, null, spouse3);
             i4 = new Individual("I4", "individual2", "F", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JAN/1999"), 
                                 21, true, null, null, spouse4);
-            f2 = new Family("F2", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JUL/2020"), null, "I3", "INDI3", "I4", "INDI4", new ArrayList<String>());
+            // After 30
+            f2 = new Family("F2", new SimpleDateFormat("dd/MMM/yyyy").parse(after30), null, "I3", "INDI3", "I4", "INDI4", new ArrayList<String>());
 
             ArrayList<String> spouse5 = new ArrayList<String>();
             spouse5.add("F3");
@@ -54,7 +95,8 @@ public class ListLivingMarriedTest {
                                 21, true, null, null, spouse5);
             i6 = new Individual("I6", "individual2", "F", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JAN/2000"), 
                                 21, true, null, null, spouse6);
-            f3 = new Family("F3", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JUL/2020"), null, "I5", "INDI5", "I6", "INDI6", new ArrayList<String>());
+            // On 30
+            f3 = new Family("F3", new SimpleDateFormat("dd/MMM/yyyy").parse(on30), null, "I5", "INDI5", "I6", "INDI6", new ArrayList<String>());
 
             GEDCOM.families.add(f1);
             GEDCOM.families.add(f2);
@@ -73,7 +115,7 @@ public class ListLivingMarriedTest {
 
     @Test
     void test1() {
-        GEDCOM.listLivingMarried();
+        GEDCOM.upcomingAnniversaries();
     }
 
 }
