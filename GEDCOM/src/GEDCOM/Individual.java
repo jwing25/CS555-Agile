@@ -590,5 +590,89 @@ public class Individual{
                 ", gender='" + gender + '\'' +
                 ", age=" + age ;
     }
+
+        //US35	List recent births
+	public void checkListRecentBirths() {
+        ArrayList<Individual> Individual = GEDCOM.individuals;
+		StringBuffer sb = new StringBuffer("Info US35: ");
+		int counter = 0;
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -30); 
+		int y = cal.get(Calendar.YEAR);
+		int m = cal.get(Calendar.MONTH) + 1;
+		int d = cal.get(Calendar.DATE);
+		for (int i = 0; i < Individual.size(); i++) {
+			Individual tmp = Individual.get(i);
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+            String birthday = formatter.format(tmp.getBirthday());
+			String[] bir = formatter.format(tmp.getBirthday())  == null ? null : birthday.split("");
+			if (bir != null && bir.length > 2) {
+				int year = Integer.parseInt(bir[2]);
+				int month = Integer.parseInt(bir[1]);
+				int day = Integer.parseInt(bir[0]);
+				if (y < year) {
+					sb.append("ID :" + tmp.getId() + " whose name is " + tmp.getName() 
+					+ " was born on " + tmp.getBirthday() + ", ");
+					counter++;
+				} else if (y == year) {
+					if (m < month) {
+						sb.append("ID :" + tmp.getId() + " whose name is " + tmp.getName() 
+						+ " was born on " + tmp.getBirthday() + ", ");
+						counter++;
+					} else if (m == month) {
+						if (d <= day) {
+							sb.append("ID :" + tmp.getId() + " whose name is " + tmp.getName() 
+							+ " was born on " + tmp.getBirthday() + ", ");
+							counter++;
+						}
+					}
+				}
+			}
+		}
+		if (counter > 0) {
+			result.add(sb.substring(0, sb.length() - 2));
+		}
+	}
+
+    //US16 Male last names
+    public void checkMaleLastNames() {
+        ArrayList<Family> Family = GEDCOM.families;
+        HashMap<String, Individual> inMap = new HashMap<String, Individual>();
+		for (int i = 0; i < Family.size(); i++) {
+			String faName = null;
+			Family fam = Family.get(i);
+			boolean flag = false;
+			if (fam.getHusbandId() != null && inMap.containsKey(fam.getHusbandId())) {
+				Individual ind = inMap.get(fam.getHusbandId());
+				if (ind.getName() != null && ind.getGender().equals("Male")) {
+					faName = ind.getName();
+					String[] check = faName.split(" ");
+					if (check.length == 2) {
+						String checkName = check[1];
+						StringBuffer buf = new StringBuffer("");
+						buf.append(fam.getHusbandId() + ":" + faName + " ");
+
+						for (int j = 0; j < fam.getChildren().size(); j++) {
+							if (inMap.containsKey(fam.getChildren().get(j))) {
+								Individual ind2 = inMap.get(fam.getChildren().get(j));
+								String[] check2 = ind2.getName().split(" ");
+								String checkName2 = check2[1];
+								if (!checkName.equals(checkName2) && ind2.getGender().equals("M")) {
+									flag = true;
+								}
+								buf.append(fam.getChildren().get(j) + ":" + ind2.getName() + " ");
+							}
+						}
+						if (flag) {
+							String tmp = "ERROR [US16]: Family : " + fam.getId()
+									+ "'s male members do not share the same last name, here are the male members:"
+									+ buf.toString();
+							result.add(tmp);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
