@@ -532,6 +532,25 @@ public class GEDCOM {
 		return singleList;
 	}
 
+	public static ArrayList<String> getMultipleBirths(){
+		ArrayList<String> multipleBirths = new ArrayList<String>();
+		for(Family f: families){
+			HashMap<Date,ArrayList<String>> mapOfBDayAndName = new HashMap<>();
+			for (String id : f.getChildren()) {
+				Individual sibling = getIndividual(id);
+				if(!mapOfBDayAndName.containsKey(sibling.getBirthday())){
+					mapOfBDayAndName.put(sibling.getBirthday(),new ArrayList<>());
+				}
+				mapOfBDayAndName.get(sibling.getBirthday()).add(sibling.getId());
+			}
+			for (Map.Entry<Date, ArrayList<String>> entry : mapOfBDayAndName.entrySet()) {
+				if(entry.getValue().size() > 1){
+					multipleBirths.addAll(entry.getValue());
+				}
+			}
+		}
+		return multipleBirths;
+	}
 
 
     public static void main(String[] args) throws ParseException {
