@@ -1,6 +1,7 @@
 package GEDCOM;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -83,6 +84,45 @@ public class Dates {
         }
 		return valid;
 	}
+
+    public static Boolean checkIllegitimateDates(ArrayList<String> lines, GEDCOM parser) {
+    	System.out.println("\nIllegitimate Dates:");
+		System.out.println("===============================");
+        Boolean valid = true;
+        String date = "";
+        for (String line : lines) {
+            Line parsed_line;
+            try {
+                parsed_line = parser.parseLine(line);
+            } catch (Exception e) {
+                throw e;
+            }
+            if (parsed_line.tag.equals("DATE")) {
+                String[] date_arr = parsed_line.arguments.split(" ");
+                date = date_arr[0] + "/" + date_arr[1] + "/" + date_arr[2];
+            } else {
+                date = "";
+            }
+            if (date.length() > 0) {
+            	if (!validDate(date)) {
+            		valid = false;
+            		System.out.println("ERROR: [US42] Invalid date " + date + ".");
+            	} 	
+            }
+        }
+        return valid;
+    }
+
+    public static Boolean validDate(String date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
+        formatter.setLenient(false);
+        try {
+            formatter.parse(date);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
 
 
 	public static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {

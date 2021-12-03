@@ -553,6 +553,50 @@ public class GEDCOM {
 	}
 
 
+	/**
+	 * Prints a list of all living couples' marriage anniversaries that occur in the next 30 days
+	 */
+	public static void upcomingAnniversaries() {
+		System.out.println("\nUpcoming Anniversaries:");
+		System.out.println("===============================");
+		SimpleDateFormat f = new SimpleDateFormat("MM/dd/yyyy");
+		long day30 = 30l * 24 * 60 * 60 * 1000; // https://stackoverflow.com/questions/29252949/best-way-to-check-if-a-java-util-date-is-older-than-30-days-compared-to-current
+		Individual husband, wife;
+		boolean upcoming;
+		if (GEDCOM.families.isEmpty()) {
+			System.out.println("No families found");
+		} else {
+			Calendar cal = Calendar.getInstance();
+			Date marriage;
+
+			// Set year of current date to default
+			Date currentdate = new Date();
+			cal.setTime(currentdate); // your date (java.util.Date)
+			cal.add(Calendar.YEAR, -cal.get(Calendar.YEAR)); 
+			currentdate = cal.getTime(); // New date
+
+			for (Family fam : families) {
+				husband = getIndividual(fam.getHusbandId());
+				wife = getIndividual(fam.getWifeId());
+				if (husband == null || wife == null) {
+					System.out.println("Error: Family ID: " + fam.getId() + ", Husband or Wife does not exist");
+					continue;
+				}
+				if (!husband.getAlive() || !wife.getAlive()) {
+					continue;
+				}
+				// Set year to default year
+				cal.setTime(fam.getMarriageDate()); // your date (java.util.Date)
+				cal.add(Calendar.YEAR, -cal.get(Calendar.YEAR)); 
+				marriage = cal.getTime(); // New date
+				upcoming = marriage.after(currentdate) && !currentdate.before(new Date((marriage.getTime() - day30)));
+				if (upcoming) {
+					System.out.println("Family ID: " + fam.getId() + ", Husband: " + fam.getHusbandName() + ", Wife: " + fam.getWifeName() + ", Marriage: " + f.format(fam.getMarriageDate()));
+				}
+			}
+		}
+	}
+
     public static void main(String[] args) throws ParseException {
 		GEDCOM parser = new GEDCOM();
 		// Ask for user input
@@ -634,5 +678,16 @@ public class GEDCOM {
 
 		// US30 - List living married
 		listLivingMarried();
+		
+		// US39 - List upcoming anniversaries
+		upcomingAnniversaries();
+		
+		// US42 - Reject illegitimate dates
+		Boolean illegitimate_dates = Dates.checkIllegitimateDates(lines, parser);
+		if (illegitimate_dates) {
+			System.out.println("Date(s) validated.");
+		} else {
+			System.out.println("==> ERROR: Illegitimate date(s) found.");
+		}
     }
 }

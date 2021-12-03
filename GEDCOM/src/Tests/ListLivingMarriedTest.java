@@ -71,4 +71,9 @@ public class ListLivingMarriedTest {
         }
     }
 
+    @Test
+    void test1() {
+        GEDCOM.listLivingMarried();
+    }
+
 }
