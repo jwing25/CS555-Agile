@@ -85,16 +85,29 @@ public class Dates {
 		return valid;
 	}
 
-    public static Boolean checkIllegitimateDates(File file) {
+    public static Boolean checkIllegitimateDates(ArrayList<String> lines, GEDCOM parser) {
+    	System.out.println("\nIllegitimate Dates:");
+		System.out.println("===============================");
         Boolean valid = true;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
-        ArrayList<String> lines = GEDCOM.readFile(file);
-        Date date;
+        String date = "";
         for (String line : lines) {
-            date = getDate(line);
-            if (!validDate(formatter.format(date))) {
-                valid = false;
-                System.out.println("ERROR: [US42] INVALID DATE " + formatter.format(date) + ".");
+            Line parsed_line;
+            try {
+                parsed_line = parser.parseLine(line);
+            } catch (Exception e) {
+                throw e;
+            }
+            if (parsed_line.tag.equals("DATE")) {
+                String[] date_arr = parsed_line.arguments.split(" ");
+                date = date_arr[0] + "/" + date_arr[1] + "/" + date_arr[2];
+            } else {
+                date = "";
+            }
+            if (date.length() > 0) {
+            	if (!validDate(date)) {
+            		valid = false;
+            		System.out.println("ERROR: [US42] Invalid date " + date + ".");
+            	} 	
             }
         }
         return valid;

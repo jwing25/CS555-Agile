@@ -1,6 +1,8 @@
 package Tests;
 
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +23,13 @@ public class UpcomingAnniversariesTest {
     public static Individual i4;
     public static Individual i5;
     public static Individual i6;
+    public static Individual i7;
+    public static Individual i8;
 
     public static Family f1;
     public static Family f2;
     public static Family f3;
+    public static Family f4;
 
     @BeforeAll
     public static void init() {
@@ -63,6 +68,17 @@ public class UpcomingAnniversariesTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        
+        // Day before
+        String beforeDate = "";
+        try {
+            c1.setTime(formatter.parse(currentdate));
+            c1.add(Calendar.DATE, -1);
+            Date resultdate = new Date(c1.getTimeInMillis());
+            beforeDate = formatter.format(resultdate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         try {
             ArrayList<String> spouse1 = new ArrayList<String>();
@@ -98,9 +114,21 @@ public class UpcomingAnniversariesTest {
             // On 30
             f3 = new Family("F3", new SimpleDateFormat("dd/MMM/yyyy").parse(on30), null, "I5", "INDI5", "I6", "INDI6", new ArrayList<String>());
 
+            ArrayList<String> spouse7 = new ArrayList<String>();
+            spouse5.add("F4");
+            ArrayList<String> spouse8 = new ArrayList<String>();
+            spouse6.add("F4");
+            i7 = new Individual("I7", "individual2", "M", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JUL/1999"), 
+                                21, true, null, null, spouse7);
+            i8 = new Individual("I8", "individual2", "F", new SimpleDateFormat("dd/MMM/yyyy").parse("1/JAN/2000"), 
+                                21, true, null, null, spouse8);
+            // Before date
+            f4 = new Family("F3", new SimpleDateFormat("dd/MMM/yyyy").parse(beforeDate), null, "I7", "INDI7", "I8", "INDI8", new ArrayList<String>());
+            
             GEDCOM.families.add(f1);
             GEDCOM.families.add(f2);
             GEDCOM.families.add(f3);
+            GEDCOM.families.add(f4);
 
             GEDCOM.individuals.add(i1);
             GEDCOM.individuals.add(i2);
@@ -108,6 +136,8 @@ public class UpcomingAnniversariesTest {
             GEDCOM.individuals.add(i4);
             GEDCOM.individuals.add(i5);
             GEDCOM.individuals.add(i6);
+            GEDCOM.individuals.add(i7);
+            GEDCOM.individuals.add(i8);
         } catch (Exception e) {
             e.printStackTrace();
         }
